@@ -1,0 +1,308 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { CustomInput } from "@/components/custom-input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { createMedicalRecord } from "@/app/actions/appointment";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { FileText, Plus } from "lucide-react";
+
+const ClinicalNotesSchema = z.object({
+  treatment_plan: z.string().min(1, "Treatment plan is required"),
+  prescriptions: z.string().optional(),
+  lab_request: z.string().optional(),
+  notes: z.string().optional(),
+  symptoms: z.string().min(1, "Symptoms are required"),
+  diagnosis: z.string().min(1, "Diagnosis is required"),
+  prescribed_medications: z.string().optional(),
+  follow_up_plan: z.string().optional(),
+  // Vital signs
+  body_temperature: z
+    .number()
+    .min(35, "Temperature must be at least 35°C")
+    .max(42, "Temperature must be at most 42°C"),
+  systolic: z
+    .number()
+    .min(70, "Systolic must be at least 70")
+    .max(200, "Systolic must be at most 200"),
+  diastolic: z
+    .number()
+    .min(40, "Diastolic must be at least 40")
+    .max(120, "Diastolic must be at most 120"),
+  heartRate: z.string().min(1, "Heart rate is required"),
+  respiratory_rate: z.number().optional(),
+  oxygen_saturation: z.number().optional(),
+  weight: z
+    .number()
+    .min(20, "Weight must be at least 20kg")
+    .max(300, "Weight must be at most 300kg"),
+  height: z
+    .number()
+    .min(100, "Height must be at least 100cm")
+    .max(250, "Height must be at most 250cm"),
+});
+
+type ClinicalNotesFormData = z.infer<typeof ClinicalNotesSchema>;
+
+interface ClinicalNotesFormProps {
+  appointmentId: number;
+  patientId: string;
+  doctorId: string;
+}
+
+export const ClinicalNotesForm = ({
+  appointmentId,
+  patientId,
+  doctorId,
+}: ClinicalNotesFormProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+
+  const form = useForm<ClinicalNotesFormData>({
+    resolver: zodResolver(ClinicalNotesSchema),
+    defaultValues: {
+      treatment_plan: "",
+      prescriptions: "",
+      lab_request: "",
+      notes: "",
+      symptoms: "",
+      diagnosis: "",
+      prescribed_medications: "",
+      follow_up_plan: "",
+      body_temperature: 37.0,
+      systolic: 120,
+      diastolic: 80,
+      heartRate: "",
+      respiratory_rate: 16,
+      oxygen_saturation: 98,
+      weight: 70,
+      height: 170,
+    },
+  });
+
+  const handleSubmit = async (values: ClinicalNotesFormData) => {
+    try {
+      setIsLoading(true);
+      const resp = await createMedicalRecord({
+        appointmentId,
+        patientId,
+        doctorId,
+        ...values,
+      });
+
+      if (resp.success) {
+        toast.success("Clinical notes saved successfully!");
+        form.reset();
+        setIsOpen(false);
+        router.refresh();
+      } else {
+        toast.error(resp.message || "Failed to save clinical notes");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button className="flex items-center gap-2">
+          <Plus size={16} />
+          Add Clinical Notes
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <FileText size={20} />
+            Clinical Notes
+          </DialogTitle>
+        </DialogHeader>
+
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-6"
+          >
+            {/* Diagnosis Section */}
+            <div className="space-y-4">
+              <Label className="text-lg font-semibold">Diagnosis</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <CustomInput
+                  type="input"
+                  control={form.control}
+                  name="symptoms"
+                  placeholder="Patient symptoms"
+                  label="Symptoms"
+                />
+                <CustomInput
+                  type="input"
+                  control={form.control}
+                  name="diagnosis"
+                  placeholder="Medical diagnosis"
+                  label="Diagnosis"
+                />
+              </div>
+            </div>
+
+            {/* Treatment Section */}
+            <div className="space-y-4">
+              <Label className="text-lg font-semibold">Treatment</Label>
+              <CustomInput
+                type="textarea"
+                control={form.control}
+                name="treatment_plan"
+                placeholder="Treatment plan details"
+                label="Treatment Plan"
+              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <CustomInput
+                  type="input"
+                  control={form.control}
+                  name="prescribed_medications"
+                  placeholder="Prescribed medications"
+                  label="Medications"
+                />
+                <CustomInput
+                  type="input"
+                  control={form.control}
+                  name="follow_up_plan"
+                  placeholder="Follow-up instructions"
+                  label="Follow-up Plan"
+                />
+              </div>
+            </div>
+
+            {/* Vital Signs Section */}
+            <div className="space-y-4">
+              <Label className="text-lg font-semibold">Vital Signs</Label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <CustomInput
+                  type="input"
+                  control={form.control}
+                  name="body_temperature"
+                  placeholder="37.0"
+                  label="Temperature (°C)"
+                  inputType="number"
+                  step="0.1"
+                />
+                <CustomInput
+                  type="input"
+                  control={form.control}
+                  name="systolic"
+                  placeholder="120"
+                  label="Systolic (mmHg)"
+                  inputType="number"
+                />
+                <CustomInput
+                  type="input"
+                  control={form.control}
+                  name="diastolic"
+                  placeholder="80"
+                  label="Diastolic (mmHg)"
+                  inputType="number"
+                />
+                <CustomInput
+                  type="input"
+                  control={form.control}
+                  name="heartRate"
+                  placeholder="72 bpm"
+                  label="Heart Rate"
+                />
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <CustomInput
+                  type="input"
+                  control={form.control}
+                  name="respiratory_rate"
+                  placeholder="16"
+                  label="Respiratory Rate"
+                  inputType="number"
+                />
+                <CustomInput
+                  type="input"
+                  control={form.control}
+                  name="oxygen_saturation"
+                  placeholder="98"
+                  label="O2 Saturation (%)"
+                  inputType="number"
+                />
+                <CustomInput
+                  type="input"
+                  control={form.control}
+                  name="weight"
+                  placeholder="70"
+                  label="Weight (kg)"
+                  inputType="number"
+                  step="0.1"
+                />
+                <CustomInput
+                  type="input"
+                  control={form.control}
+                  name="height"
+                  placeholder="170"
+                  label="Height (cm)"
+                  inputType="number"
+                />
+              </div>
+            </div>
+
+            {/* Additional Information */}
+            <div className="space-y-4">
+              <Label className="text-lg font-semibold">
+                Additional Information
+              </Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <CustomInput
+                  type="textarea"
+                  control={form.control}
+                  name="lab_request"
+                  placeholder="Laboratory tests requested"
+                  label="Lab Requests"
+                />
+                <CustomInput
+                  type="textarea"
+                  control={form.control}
+                  name="notes"
+                  placeholder="Additional clinical notes"
+                  label="Clinical Notes"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-4 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsOpen(false)}
+                disabled={isLoading}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? "Saving..." : "Save Clinical Notes"}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+};
