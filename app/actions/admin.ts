@@ -1,7 +1,7 @@
 "use server";
 import db from "@/lib/db";
 import { DoctorSchema, WorkingDaysSchema, StaffSchema } from "@/lib/schema";
-import { clerkClient } from "@clerk/nextjs/server";
+import { createClerkUser, validatePassword } from "@/lib/clerk-utils";
 
 export async function createNewDoctor(data: any) {
   try {
@@ -20,14 +20,12 @@ export async function createNewDoctor(data: any) {
     const validatedValues = values.data;
     const workingDayData = workingDaysValues.data!;
 
-    const client = await clerkClient();
-
     // Split name into first and last name, handling cases where there's no space
     const nameParts = validatedValues.name.trim().split(" ");
     const firstName = nameParts[0] || "";
     const lastName = nameParts.slice(1).join(" ") || "";
 
-    // Validate required fields for Clerk
+    // Validate required fields
     if (!validatedValues.email || !validatedValues.password) {
       return {
         success: false,
@@ -36,39 +34,42 @@ export async function createNewDoctor(data: any) {
       };
     }
 
-    // Validate password strength for Clerk
-    if (validatedValues.password.length < 8) {
+    // Validate password strength
+    const passwordValidation = validatePassword(validatedValues.password);
+    if (!passwordValidation.valid) {
       return {
         success: false,
         error: true,
-        message: "Password must be at least 8 characters long",
+        message: passwordValidation.message,
       };
     }
 
-    // Check if email already exists
-    try {
-      const existingUser = await client.users.getUserList({
-        emailAddress: [validatedValues.email],
-      });
+    // Create user in Clerk
+    const clerkResult = await createClerkUser({
+      email: validatedValues.email,
+      password: validatedValues.password,
+      firstName,
+      lastName,
+      role: "doctor",
+    });
 
-      if (existingUser.data.length > 0) {
-        return {
-          success: false,
-          error: true,
-          message: "User with this email already exists",
-        };
-      }
-    } catch (error) {
-      console.log("Error checking existing user:", error);
+    if (!clerkResult.success) {
+      return {
+        success: false,
+        error: true,
+        message: clerkResult.message,
+      };
     }
 
-    const user = await client.users.createUser({
-      emailAddress: [validatedValues.email],
-      password: validatedValues.password,
-      firstName: firstName,
-      lastName: lastName,
-      publicMetadata: { role: "doctor" },
-    });
+    const user = clerkResult.user;
+
+    if (!user) {
+      return {
+        success: false,
+        error: true,
+        message: "Failed to create user account",
+      };
+    }
 
     const { password, ...doctorData } = validatedValues;
 
@@ -93,11 +94,8 @@ export async function createNewDoctor(data: any) {
       error: false,
     };
   } catch (error) {
-    console.log("Clerk error details:", error);
-    if (error && typeof error === "object" && "errors" in error) {
-      console.log("Validation errors:", error.errors);
-    }
-    return { error: true, success: false, message: "Something went wrong" };
+    console.error("Error creating doctor:", error);
+    return { error: true, success: false, message: "Failed to create doctor" };
   }
 }
 
@@ -115,14 +113,12 @@ export async function createNewStaff(data: any) {
 
     const validatedValues = values.data;
 
-    const client = await clerkClient();
-
     // Split name into first and last name, handling cases where there's no space
     const nameParts = validatedValues.name.trim().split(" ");
     const firstName = nameParts[0] || "";
     const lastName = nameParts.slice(1).join(" ") || "";
 
-    // Validate required fields for Clerk
+    // Validate required fields
     if (!validatedValues.email || !validatedValues.password) {
       return {
         success: false,
@@ -131,39 +127,42 @@ export async function createNewStaff(data: any) {
       };
     }
 
-    // Validate password strength for Clerk
-    if (validatedValues.password.length < 8) {
+    // Validate password strength
+    const passwordValidation = validatePassword(validatedValues.password);
+    if (!passwordValidation.valid) {
       return {
         success: false,
         error: true,
-        message: "Password must be at least 8 characters long",
+        message: passwordValidation.message,
       };
     }
 
-    // Check if email already exists
-    try {
-      const existingUser = await client.users.getUserList({
-        emailAddress: [validatedValues.email],
-      });
+    // Create user in Clerk
+    const clerkResult = await createClerkUser({
+      email: validatedValues.email,
+      password: validatedValues.password,
+      firstName,
+      lastName,
+      role: "staff",
+    });
 
-      if (existingUser.data.length > 0) {
-        return {
-          success: false,
-          error: true,
-          message: "User with this email already exists",
-        };
-      }
-    } catch (error) {
-      console.log("Error checking existing user:", error);
+    if (!clerkResult.success) {
+      return {
+        success: false,
+        error: true,
+        message: clerkResult.message,
+      };
     }
 
-    const user = await client.users.createUser({
-      emailAddress: [validatedValues.email],
-      password: validatedValues.password,
-      firstName: firstName,
-      lastName: lastName,
-      publicMetadata: { role: "staff" },
-    });
+    const user = clerkResult.user;
+
+    if (!user) {
+      return {
+        success: false,
+        error: true,
+        message: "Failed to create user account",
+      };
+    }
 
     const { password, ...staffData } = validatedValues;
 
@@ -180,10 +179,7 @@ export async function createNewStaff(data: any) {
       error: false,
     };
   } catch (error) {
-    console.log("Clerk error details:", error);
-    if (error && typeof error === "object" && "errors" in error) {
-      console.log("Validation errors:", error.errors);
-    }
-    return { error: true, success: false, message: "Something went wrong" };
+    console.error("Error creating staff:", error);
+    return { error: true, success: false, message: "Failed to create staff" };
   }
 }

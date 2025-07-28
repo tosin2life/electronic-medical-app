@@ -5,7 +5,14 @@ import { checkRole } from "@/utils/roles";
 import { getAppointmentById } from "@/utils/services/appointment";
 import { Appointment, Doctor, Patient } from "@prisma/client";
 import { format } from "date-fns";
-import { ArrowLeft, Calendar, Clock, MapPin, User } from "lucide-react";
+import {
+  ArrowLeft,
+  Calendar,
+  Clock,
+  MapPin,
+  User,
+  FileText,
+} from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import React from "react";
@@ -64,11 +71,13 @@ export default async function AppointmentPage({
             />
           )}
           {isDoctor && appointmentData.status !== "COMPLETED" && (
-            <ClinicalNotesForm
-              appointmentId={parseInt(id)}
-              patientId={appointmentData.patient_id}
-              doctorId={appointmentData.doctor_id}
-            />
+            <Link
+              href={`/record/appointments/${id}/clinical-notes`}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              <FileText size={16} />
+              Add Clinical Notes
+            </Link>
           )}
         </div>
       </div>

@@ -1,10 +1,8 @@
 import { ClinicalNotesForm } from "@/components/forms/clinical-notes-form";
-import { ProfileImage } from "@/components/profile-image";
-import { checkRole } from "@/utils/roles";
 import { getAppointmentById } from "@/utils/services/appointment";
+import { checkRole } from "@/utils/roles";
 import { Appointment, Doctor, Patient } from "@prisma/client";
-import { format } from "date-fns";
-import { ArrowLeft, Calendar, Clock, MapPin, User } from "lucide-react";
+import { ArrowLeft, FileText } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import React from "react";
@@ -29,16 +27,54 @@ export default async function ClinicalNotesPage({
   }
 
   const isDoctor = await checkRole("DOCTOR");
-
-  if (!isDoctor) {
-    notFound();
-  }
-
   const appointmentData = appointment.data as AppointmentWithRelations;
   const patient = appointmentData.patient;
   const doctor = appointmentData.doctor;
   const patientName = `${patient.first_name} ${patient.last_name}`;
   const doctorName = doctor.name;
+
+  // Only doctors can access this page
+  if (!isDoctor) {
+    notFound();
+  }
+
+  // If appointment is already completed, show message
+  if (appointmentData.status === "COMPLETED") {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <Link
+            href={`/record/appointments/${id}`}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeft size={20} />
+            Back to Appointment
+          </Link>
+          <div className="h-6 w-px bg-gray-300" />
+          <h1 className="text-2xl font-bold">Clinical Notes</h1>
+        </div>
+
+        <div className="bg-white rounded-xl p-6">
+          <div className="text-center space-y-4">
+            <FileText size={48} className="mx-auto text-gray-400" />
+            <h2 className="text-xl font-semibold text-gray-600">
+              Appointment Already Completed
+            </h2>
+            <p className="text-gray-500">
+              This appointment has already been completed and clinical notes
+              have been recorded.
+            </p>
+            <Link
+              href={`/record/appointments/${id}`}
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              View Appointment Details
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -53,97 +89,51 @@ export default async function ClinicalNotesPage({
             Back to Appointment
           </Link>
           <div className="h-6 w-px bg-gray-300" />
-          <h1 className="text-2xl font-bold">
-            Clinical Notes - Appointment #{id}
-          </h1>
+          <h1 className="text-2xl font-bold">Clinical Notes</h1>
         </div>
       </div>
 
-      {/* Appointment Summary Card */}
-      <div className="bg-white rounded-xl p-6 shadow-sm">
-        <h2 className="text-lg font-semibold mb-4">Appointment Summary</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Patient Info */}
-          <div className="flex items-center gap-4">
-            <ProfileImage
-              url={patient.img || undefined}
-              name={patientName}
-              bgColor={patient.colorCode || undefined}
-              textClassName="text-black"
-            />
-            <div>
-              <h3 className="font-semibold text-lg">{patientName}</h3>
-              <p className="text-gray-600">{patient.phone}</p>
-              <p className="text-gray-600">{patient.email}</p>
-            </div>
+      {/* Appointment Info Card */}
+      <div className="bg-white rounded-xl p-6 border">
+        <h2 className="text-lg font-semibold mb-4">Appointment Information</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <p className="text-sm text-gray-600">Patient</p>
+            <p className="font-medium">{patientName}</p>
           </div>
-
-          {/* Appointment Details */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <Calendar size={16} className="text-gray-500" />
-              <span className="text-sm">
-                {format(
-                  appointmentData.appointment_date,
-                  "EEEE, MMMM dd, yyyy"
-                )}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Clock size={16} className="text-gray-500" />
-              <span className="text-sm">{appointmentData.time}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <MapPin size={16} className="text-gray-500" />
-              <span className="text-sm">{doctor.department}</span>
-            </div>
+          <div>
+            <p className="text-sm text-gray-600">Doctor</p>
+            <p className="font-medium">{doctorName}</p>
           </div>
-        </div>
-
-        {/* Status */}
-        <div className="mt-4 pt-4 border-t border-gray-200">
-          <span className="text-sm text-gray-600">Status: </span>
-          <span
-            className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-              appointmentData.status === "COMPLETED"
-                ? "bg-green-100 text-green-800"
-                : appointmentData.status === "CANCELLED"
-                ? "bg-red-100 text-red-800"
-                : appointmentData.status === "PENDING"
-                ? "bg-yellow-100 text-yellow-800"
-                : "bg-blue-100 text-blue-800"
-            }`}
-          >
-            {appointmentData.status}
-          </span>
+          <div>
+            <p className="text-sm text-gray-600">Appointment ID</p>
+            <p className="font-medium">#{id}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-600">Status</p>
+            <p className="font-medium capitalize">
+              {appointmentData.status.toLowerCase()}
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Clinical Notes Form */}
-      {appointmentData.status !== "COMPLETED" && (
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold mb-4">Enter Clinical Notes</h2>
-          <ClinicalNotesForm
-            appointmentId={parseInt(id)}
-            patientId={appointmentData.patient_id}
-            doctorId={appointmentData.doctor_id}
-          />
+      <div className="bg-white rounded-xl p-6 border">
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold">Enter Clinical Notes</h2>
+          <p className="text-sm text-gray-600 mt-1">
+            Complete the form below to record clinical notes for this
+            appointment.
+          </p>
         </div>
-      )}
 
-      {/* Existing Medical Records */}
-      {appointmentData.status === "COMPLETED" && (
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold mb-4">Medical Records</h2>
-          <div className="text-center py-8 text-gray-500">
-            <p>Medical records will be displayed here once created.</p>
-            <p className="text-sm mt-2">
-              Use the "Add Clinical Notes" button above to create medical
-              records.
-            </p>
-          </div>
-        </div>
-      )}
+        <ClinicalNotesForm
+          appointmentId={parseInt(id)}
+          patientId={appointmentData.patient_id}
+          doctorId={appointmentData.doctor_id}
+        />
+      </div>
     </div>
   );
 }

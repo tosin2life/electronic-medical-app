@@ -1,21 +1,23 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
-import { clerkClient } from "@clerk/nextjs/server";
+import { getCurrentUser } from "@/lib/clerk-utils";
 import db from "@/lib/db";
 
 export async function syncUserWithDatabase() {
   try {
-    const { userId } = await auth();
+    const userResult = await getCurrentUser();
 
-    if (!userId) {
-      return { success: false, message: "User not authenticated" };
+    if (!userResult.success) {
+      return userResult;
     }
 
-    // Get user from Clerk
-    const client = await clerkClient();
-    const clerkUser = await client.users.getUser(userId);
-    const userRole = clerkUser.publicMetadata?.role as string;
+    const { user } = userResult;
+    
+    if (!user) {
+      return { success: false, message: "User data not found" };
+    }
+    
+    const userRole = user.role;
 
     if (!userRole) {
       return { success: false, message: "User role not found" };
@@ -27,17 +29,17 @@ export async function syncUserWithDatabase() {
     switch (userRole) {
       case "doctor":
         existingUser = await db.doctor.findUnique({
-          where: { id: userId },
+          where: { id: user.id },
         });
         break;
       case "patient":
         existingUser = await db.patient.findUnique({
-          where: { id: userId },
+          where: { id: user.id },
         });
         break;
       case "staff":
         existingUser = await db.staff.findUnique({
-          where: { id: userId },
+          where: { id: user.id },
         });
         break;
       default:
@@ -53,9 +55,9 @@ export async function syncUserWithDatabase() {
       case "doctor":
         await db.doctor.create({
           data: {
-            id: userId,
-            name: `${clerkUser.firstName} ${clerkUser.lastName}`.trim(),
-            email: clerkUser.emailAddresses[0]?.emailAddress || "",
+            id: user.id,
+            name: `${user.firstName} ${user.lastName}`.trim(),
+            email: user.email || "",
             phone: "", // Will need to be updated later
             specialization: "", // Will need to be updated later
             address: "", // Will need to be updated later
@@ -69,10 +71,10 @@ export async function syncUserWithDatabase() {
       case "patient":
         await db.patient.create({
           data: {
-            id: userId,
-            first_name: clerkUser.firstName || "",
-            last_name: clerkUser.lastName || "",
-            email: clerkUser.emailAddresses[0]?.emailAddress || "",
+            id: user.id,
+            first_name: user.firstName || "",
+            last_name: user.lastName || "",
+            email: user.email || "",
             phone: "", // Will need to be updated later
             address: "", // Will need to be updated later
             date_of_birth: new Date(), // Will need to be updated later
@@ -91,9 +93,9 @@ export async function syncUserWithDatabase() {
       case "staff":
         await db.staff.create({
           data: {
-            id: userId,
-            name: `${clerkUser.firstName} ${clerkUser.lastName}`.trim(),
-            email: clerkUser.emailAddresses[0]?.emailAddress || "",
+            id: user.id,
+            name: `${user.firstName} ${user.lastName}`.trim(),
+            email: user.email || "",
             phone: "", // Will need to be updated later
             address: "", // Will need to be updated later
             role: "NURSE", // Will need to be updated later
