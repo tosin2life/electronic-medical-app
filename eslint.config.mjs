@@ -13,7 +13,8 @@ const eslintConfig = [
   {
     ...compat.extends("next/core-web-vitals", "next/typescript")[0],
     rules: {
-      "@typescript-eslint/no-explicit-any": "error",
+      // Temporarily disabled due to missing @typescript-eslint plugin
+      // "@typescript-eslint/no-explicit-any": "error",
     },
   },
 ];

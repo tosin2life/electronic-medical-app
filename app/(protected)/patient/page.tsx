@@ -99,7 +99,7 @@ const PatientDashboard = async () => {
         </div>
 
         <div className="h-[500px]">
-          <AppointmentChart data={monthlyData} />
+          <AppointmentChart data={monthlyData || []} />
         </div>
 
         <div className="bg-white rounded-xl p-4 mt-8">
