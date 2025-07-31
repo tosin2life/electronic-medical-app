@@ -44,9 +44,9 @@ export const AppointmentActionOptions = async ({
             className="w-full justify-start"
             asChild
           >
-            <Link href={`appointments/${appointmentId}`}>
+            {/* <Link href={`/appointments/${appointmentId}`}>
               <User size={16} /> View Full Details
-            </Link>
+            </Link> */}
           </Button>
 
           {user.userId === doctorId && status !== "COMPLETED" && (
