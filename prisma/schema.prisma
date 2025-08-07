@@ -54,6 +54,13 @@ enum PaymentStatus {
   PART
 }
 
+enum ServiceType {
+  CONSULTATION
+  MEDICATION
+  LAB_TEST
+  PROCEDURE
+  OTHER
+}
 
 model Patient {
   id                       String   @id //clerk userId
@@ -174,13 +181,16 @@ model Payment {
   appointment_id  Int @unique
   bill_date       DateTime
   payment_date    DateTime
-  discount        Float
+  discount        Float @default(0)
   total_amount    Float
-  amount_paid     Float
+  amount_paid     Float @default(0)
+  tax_amount      Float @default(0) // Add tax support
+  subtotal        Float // Add subtotal
 
   payment_method  PaymentMethod @default(CASH)
   status          PaymentStatus @default(UNPAID)
   receipt_number  Int @default(autoincrement())
+  notes           String? // Add notes field
 
   appointment     Appointment @relation(fields: [appointment_id], references: [id], onDelete: Cascade)
   patient         Patient  @relation(fields: [patient_id], references: [id], onDelete: Cascade)
@@ -198,6 +208,9 @@ model PatientBills {
   quantity        Int
   unit_cost       Float
   total_cost      Float
+  medication_name String? // Add for medication tracking
+  dosage          String? // Add dosage information
+  instructions    String? // Add medication instructions
   service         Services @relation(fields: [service_id], references: [id])
   payment         Payment @relation(fields: [bill_id], references: [id], onDelete: Cascade)
 
@@ -310,6 +323,7 @@ model Services {
   service_name    String
   description     String
   price           Float
+  service_type    ServiceType @default(CONSULTATION) // Add this field
   labtest         LabTest?
   bills           PatientBills[]
 

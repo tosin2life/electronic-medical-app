@@ -113,7 +113,7 @@ const BillingPage = async (props: SearchParamsProps) => {
         </td>
         <td className="hidden xl:table-cell">{item?.discount?.toFixed(2)}</td>
         <td className="hidden xl:table-cell">
-          {(item?.total_amount - item?.discount).toFixed(2)}
+          {(item?.subtotal || item?.total_amount - item?.discount).toFixed(2)}
         </td>
         <td className="hidden xl:table-cell">
           {(item?.amount_paid).toFixed(2)}
@@ -134,7 +134,7 @@ const BillingPage = async (props: SearchParamsProps) => {
 
         <td>
           <ViewAction
-            href={`/appointments/${item?.appointment_id}?cat=bills`}
+            href={`/record/appointments/${item?.appointment_id}?cat=bills`}
           />
 
           {isAdmin && (

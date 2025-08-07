@@ -3,6 +3,7 @@ import { ClinicalNotesForm } from "@/components/forms/clinical-notes-form";
 import { ProfileImage } from "@/components/profile-image";
 import { checkRole } from "@/utils/roles";
 import { getAppointmentById } from "@/utils/services/appointment";
+import { getBillingByAppointment } from "@/utils/services/billing";
 import { Appointment, Doctor, Patient } from "@prisma/client";
 import { format } from "date-fns";
 import {
@@ -12,6 +13,8 @@ import {
   MapPin,
   User,
   FileText,
+  DollarSign,
+  Plus,
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -44,6 +47,9 @@ export default async function AppointmentPage({
   const doctor = appointmentData.doctor;
   const patientName = `${patient.first_name} ${patient.last_name}`;
   const doctorName = doctor.name;
+
+  // Get billing information
+  const billing = await getBillingByAppointment(parseInt(id));
 
   return (
     <div className="space-y-6">
@@ -250,13 +256,99 @@ export default async function AppointmentPage({
 
       {/* Billing Section */}
       <div className="bg-white rounded-xl p-6 shadow-sm">
-        <h2 className="text-lg font-semibold mb-4">Billing Information</h2>
-        <div className="text-center py-8 text-gray-500">
-          <p>No billing information found for this appointment.</p>
-          <p className="text-sm mt-2">
-            Billing details will appear here once the appointment is completed.
-          </p>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold flex items-center gap-2">
+            <DollarSign size={20} />
+            Billing Information
+          </h2>
+          {appointmentData.status === "COMPLETED" && (isAdmin || isDoctor) && (
+            <Link
+              href={`/record/appointments/${id}/billing`}
+              className="inline-flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
+            >
+              <Plus size={16} />
+              Create Bill
+            </Link>
+          )}
         </div>
+
+        {billing.success && billing.data ? (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <span className="text-sm text-gray-600">Total Amount</span>
+                <div className="mt-1 font-semibold text-lg">
+                  ${billing.data.total_amount.toFixed(2)}
+                </div>
+              </div>
+              <div>
+                <span className="text-sm text-gray-600">Status</span>
+                <div className="mt-1">
+                  <span
+                    className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                      billing.data.status === "PAID"
+                        ? "bg-green-100 text-green-800"
+                        : billing.data.status === "UNPAID"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-yellow-100 text-yellow-800"
+                    }`}
+                  >
+                    {billing.data.status}
+                  </span>
+                </div>
+              </div>
+              <div>
+                <span className="text-sm text-gray-600">Amount Paid</span>
+                <div className="mt-1 font-semibold">
+                  ${billing.data.amount_paid.toFixed(2)}
+                </div>
+              </div>
+            </div>
+
+            {billing.data.bills && billing.data.bills.length > 0 && (
+              <div>
+                <h4 className="font-medium mb-2">Bill Items</h4>
+                <div className="space-y-2">
+                  {billing.data.bills.map((bill: any) => (
+                    <div
+                      key={bill.id}
+                      className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+                    >
+                      <div>
+                        <div className="font-medium">
+                          {bill.service.service_name}
+                        </div>
+                        {bill.medication_name && (
+                          <div className="text-sm text-gray-600">
+                            {bill.medication_name}{" "}
+                            {bill.dosage && `- ${bill.dosage}`}
+                          </div>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <div className="font-medium">
+                          ${bill.total_cost.toFixed(2)}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          Qty: {bill.quantity}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="text-center py-8 text-gray-500">
+            <p>No billing information found for this appointment.</p>
+            <p className="text-sm mt-2">
+              {appointmentData.status === "COMPLETED"
+                ? "Create a bill using the button above."
+                : "Billing details will appear here once the appointment is completed."}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

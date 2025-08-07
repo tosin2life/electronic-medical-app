@@ -2,7 +2,7 @@ import { checkRole } from "@/utils/roles";
 import { auth } from "@clerk/nextjs/server";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
-import { EllipsisVertical, User, FileText } from "lucide-react";
+import { EllipsisVertical, User, FileText, DollarSign } from "lucide-react";
 import Link from "next/link";
 import { AppointmentActionDialog } from "./appointment-action-dialog";
 
@@ -38,6 +38,21 @@ export const AppointmentActionOptions = async ({
       <PopoverContent className="w-56 p-3">
         <div className="space-y-3 flex flex-col items-start">
           <span className="text-gray-400 text-xs">Perform Actions</span>
+
+          {/* Add billing action for completed appointments */}
+          {status === "COMPLETED" && (isAdmin || user.userId === doctorId) && (
+            <Button
+              size="sm"
+              variant="ghost"
+              className="w-full justify-start"
+              asChild
+            >
+              <Link href={`/record/appointments/${appointmentId}/billing`}>
+                <DollarSign size={16} /> Create Bill
+              </Link>
+            </Button>
+          )}
+
           <Button
             size="sm"
             variant="ghost"

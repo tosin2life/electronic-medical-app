@@ -1,83 +1,83 @@
+import { PrismaClient } from "@prisma/client";
+import { faker } from "@faker-js/faker";
+import db from "@/lib/db";
 import { generateRandomColor } from "@/utils";
-
-const { PrismaClient } = require("@prisma/client");
-const { fakerDE: faker } = require("@faker-js/faker");
 
 const prisma = new PrismaClient();
 
 async function seed() {
-  console.log("Seeding data...");
-
-  // Create 3 staff
-  const staffRoles = ["NURSE", "CASHIER", "LAB_TECHNICIAN"];
-  for (const role of staffRoles) {
-    const mobile = faker.phone.number();
-
-    await prisma.staff.create({
-      data: {
-        id: faker.string?.uuid(),
-        email: faker.internet.email(),
-        name: faker.name.fullName(),
-        phone: mobile,
-        address: faker.address.streetAddress(),
-        department: faker.company.name(),
-        role: role,
-        status: "ACTIVE",
-        colorCode: generateRandomColor(),
-      },
-    });
-  }
-
-  // Create 10 doctors
+  // Create Doctors
   const doctors = [];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 5; i++) {
     const doctor = await prisma.doctor.create({
       data: {
-        id: faker.string.uuid(),
+        id: `doctor_${i + 1}`,
         email: faker.internet.email(),
-        name: faker.name.fullName(),
-        specialization: faker.name.jobType(),
-        license_number: faker.string.uuid(),
+        name: faker.person.fullName(),
+        specialization: faker.helpers.arrayElement([
+          "Cardiology",
+          "Neurology",
+          "Orthopedics",
+          "Pediatrics",
+          "Dermatology",
+        ]),
+        license_number: faker.string.alphanumeric(8).toUpperCase(),
         phone: faker.phone.number(),
-        address: faker.address.streetAddress(),
-        department: faker.company.name(),
-        availability_status: "ACTIVE",
+        address: faker.location.streetAddress(),
+        department: faker.helpers.arrayElement([
+          "Emergency",
+          "Surgery",
+          "Outpatient",
+          "Inpatient",
+        ]),
         colorCode: generateRandomColor(),
-        type: i % 2 === 0 ? "FULL" : "PART",
-        working_days: {
-          create: [
-            {
-              day: "Monday",
-              start_time: "08:00",
-              close_time: "17:00",
-            },
-            {
-              day: "Wednesday",
-              start_time: "08:00",
-              close_time: "17:00",
-            },
-          ],
-        },
       },
     });
+
     doctors.push(doctor);
   }
 
-  // Create 20 patients
+  // Create Staff
+  for (let i = 0; i < 10; i++) {
+    await prisma.staff.create({
+      data: {
+        id: `staff_${i + 1}`,
+        email: faker.internet.email(),
+        name: faker.person.fullName(),
+        phone: faker.phone.number(),
+        address: faker.location.streetAddress(),
+        department: faker.helpers.arrayElement([
+          "Nursing",
+          "Administration",
+          "Laboratory",
+          "Pharmacy",
+        ]),
+        role: faker.helpers.arrayElement([
+          "ADMIN",
+          "NURSE",
+          "LAB_TECHNICIAN",
+          "CASHIER",
+        ]),
+        colorCode: generateRandomColor(),
+      },
+    });
+  }
+
+  // Create Patients
   const patients = [];
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 50; i++) {
     const patient = await prisma.patient.create({
       data: {
-        id: faker.string.uuid(),
-        first_name: faker.name.firstName(),
-        last_name: faker.name.lastName(),
+        id: `patient_${i + 1}`,
+        first_name: faker.person.firstName(),
+        last_name: faker.person.lastName(),
         date_of_birth: faker.date.birthdate(),
         gender: i % 2 === 0 ? "MALE" : "FEMALE",
         phone: faker.phone.number(),
         email: faker.internet.email(),
         marital_status: i % 3 === 0 ? "Married" : "Single",
-        address: faker.address.streetAddress(),
-        emergency_contact_name: faker.name.fullName(),
+        address: faker.location.streetAddress(),
+        emergency_contact_name: faker.person.fullName(),
         emergency_contact_number: faker.phone.number(),
         relation: "Sibling",
         blood_group: i % 4 === 0 ? "O+" : "A+",
@@ -108,6 +108,53 @@ async function seed() {
         type: "Checkup",
         reason: faker.lorem.sentence(),
       },
+    });
+  }
+
+  // Add billing services
+  const billingServices = [
+    {
+      service_name: "General Consultation",
+      description: "Standard doctor consultation",
+      price: 50.0,
+      service_type: "CONSULTATION",
+    },
+    {
+      service_name: "Specialist Consultation",
+      description: "Specialist doctor consultation",
+      price: 100.0,
+      service_type: "CONSULTATION",
+    },
+    {
+      service_name: "Amoxicillin 500mg",
+      description: "Antibiotic medication",
+      price: 15.0,
+      service_type: "MEDICATION",
+    },
+    {
+      service_name: "Ibuprofen 400mg",
+      description: "Pain relief medication",
+      price: 8.0,
+      service_type: "MEDICATION",
+    },
+    {
+      service_name: "Blood Test",
+      description: "Complete blood count",
+      price: 25.0,
+      service_type: "LAB_TEST",
+    },
+    {
+      service_name: "X-Ray",
+      description: "Chest X-Ray examination",
+      price: 75.0,
+      service_type: "PROCEDURE",
+    },
+  ];
+
+  // Add services to database
+  for (const service of billingServices) {
+    await db.services.create({
+      data: service,
     });
   }
 
