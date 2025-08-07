@@ -1,4 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+import {
+  PrismaClient,
+  ServiceType,
+  Gender,
+  AppointmentStatus,
+  Role,
+} from "@prisma/client";
 import { faker } from "@faker-js/faker";
 import db from "@/lib/db";
 import { generateRandomColor } from "@/utils";
@@ -53,10 +59,10 @@ async function seed() {
           "Pharmacy",
         ]),
         role: faker.helpers.arrayElement([
-          "ADMIN",
-          "NURSE",
-          "LAB_TECHNICIAN",
-          "CASHIER",
+          Role.ADMIN,
+          Role.NURSE,
+          Role.LAB_TECHNICIAN,
+          Role.CASHIER,
         ]),
         colorCode: generateRandomColor(),
       },
@@ -72,7 +78,7 @@ async function seed() {
         first_name: faker.person.firstName(),
         last_name: faker.person.lastName(),
         date_of_birth: faker.date.birthdate(),
-        gender: i % 2 === 0 ? "MALE" : "FEMALE",
+        gender: i % 2 === 0 ? Gender.MALE : Gender.FEMALE,
         phone: faker.phone.number(),
         email: faker.internet.email(),
         marital_status: i % 3 === 0 ? "Married" : "Single",
@@ -104,7 +110,8 @@ async function seed() {
         doctor_id: doctor.id,
         appointment_date: faker.date.soon(),
         time: "10:00",
-        status: i % 4 === 0 ? "PENDING" : "SCHEDULED",
+        status:
+          i % 4 === 0 ? AppointmentStatus.PENDING : AppointmentStatus.SCHEDULED,
         type: "Checkup",
         reason: faker.lorem.sentence(),
       },
@@ -117,37 +124,37 @@ async function seed() {
       service_name: "General Consultation",
       description: "Standard doctor consultation",
       price: 50.0,
-      service_type: "CONSULTATION",
+      service_type: ServiceType.CONSULTATION,
     },
     {
       service_name: "Specialist Consultation",
       description: "Specialist doctor consultation",
       price: 100.0,
-      service_type: "CONSULTATION",
+      service_type: ServiceType.CONSULTATION,
     },
     {
       service_name: "Amoxicillin 500mg",
       description: "Antibiotic medication",
       price: 15.0,
-      service_type: "MEDICATION",
+      service_type: ServiceType.MEDICATION,
     },
     {
       service_name: "Ibuprofen 400mg",
       description: "Pain relief medication",
       price: 8.0,
-      service_type: "MEDICATION",
+      service_type: ServiceType.MEDICATION,
     },
     {
       service_name: "Blood Test",
       description: "Complete blood count",
       price: 25.0,
-      service_type: "LAB_TEST",
+      service_type: ServiceType.LAB_TEST,
     },
     {
       service_name: "X-Ray",
       description: "Chest X-Ray examination",
       price: 75.0,
-      service_type: "PROCEDURE",
+      service_type: ServiceType.PROCEDURE,
     },
   ];
 
