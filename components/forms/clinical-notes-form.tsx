@@ -243,25 +243,52 @@ export const ClinicalNotesForm = ({
               />
             </div>
           </div>
+
+          {/* Symptoms */}
+          <div className="space-y-4">
+            <Label className="text-lg font-semibold">Symptoms</Label>
+            <CustomInput
+              type="textarea"
+              control={form.control}
+              name="symptoms"
+              placeholder="Patient symptoms"
+              label="Symptoms"
+            />
+          </div>
+
+          {/* Observation */}
+          <div className="space-y-4">
+            <Label className="text-lg font-semibold">Observation</Label>
+            <CustomInput
+              type="textarea"
+              control={form.control}
+              name="notes"
+              placeholder="Additional clinical notes"
+              label="Clinical Notes"
+            />
+          </div>
+
           {/* Diagnosis Section */}
           <div className="space-y-4">
             <Label className="text-lg font-semibold">Diagnosis</Label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <CustomInput
-                type="input"
-                control={form.control}
-                name="symptoms"
-                placeholder="Patient symptoms"
-                label="Symptoms"
-              />
-              <CustomInput
-                type="input"
-                control={form.control}
-                name="diagnosis"
-                placeholder="Medical diagnosis"
-                label="Diagnosis"
-              />
-            </div>
+            <CustomInput
+              type="input"
+              control={form.control}
+              name="diagnosis"
+              placeholder="Medical diagnosis"
+              label="Diagnosis"
+            />
+          </div>
+          {/* Lab Request */}
+          <div className="space-y-4">
+            <Label className="text-lg font-semibold">Lab Request</Label>
+            <CustomInput
+              type="textarea"
+              control={form.control}
+              name="lab_request"
+              placeholder="Laboratory tests requested"
+              label="Lab Requests"
+            />
           </div>
 
           {/* Treatment Section */}
@@ -288,29 +315,6 @@ export const ClinicalNotesForm = ({
                 name="follow_up_plan"
                 placeholder="Follow-up instructions"
                 label="Follow-up Plan"
-              />
-            </div>
-          </div>
-
-          {/* Additional Information */}
-          <div className="space-y-4">
-            <Label className="text-lg font-semibold">
-              Additional Information
-            </Label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <CustomInput
-                type="textarea"
-                control={form.control}
-                name="lab_request"
-                placeholder="Laboratory tests requested"
-                label="Lab Requests"
-              />
-              <CustomInput
-                type="textarea"
-                control={form.control}
-                name="notes"
-                placeholder="Additional clinical notes"
-                label="Clinical Notes"
               />
             </div>
           </div>

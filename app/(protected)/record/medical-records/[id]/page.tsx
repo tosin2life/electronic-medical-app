@@ -177,46 +177,6 @@ export default async function MedicalRecordPage({
         </div>
       </div>
 
-      {/* Diagnosis Section */}
-      {diagnosis && (
-        <div className="bg-white rounded-xl p-6 border">
-          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <FileText size={20} />
-            Diagnosis
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="font-medium mb-2">Symptoms</h3>
-              <p className="text-gray-700 bg-gray-50 p-3 rounded-lg">
-                {diagnosis.symptoms}
-              </p>
-            </div>
-            <div>
-              <h3 className="font-medium mb-2">Diagnosis</h3>
-              <p className="text-gray-700 bg-gray-50 p-3 rounded-lg">
-                {diagnosis.diagnosis}
-              </p>
-            </div>
-            {diagnosis.prescribed_medications && (
-              <div>
-                <h3 className="font-medium mb-2">Prescribed Medications</h3>
-                <p className="text-gray-700 bg-gray-50 p-3 rounded-lg">
-                  {diagnosis.prescribed_medications}
-                </p>
-              </div>
-            )}
-            {diagnosis.follow_up_plan && (
-              <div>
-                <h3 className="font-medium mb-2">Follow-up Plan</h3>
-                <p className="text-gray-700 bg-gray-50 p-3 rounded-lg">
-                  {diagnosis.follow_up_plan}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Vital Signs Section */}
       {vitalSigns && (
         <div className="bg-white rounded-xl p-6 border">
@@ -292,6 +252,39 @@ export default async function MedicalRecordPage({
         </div>
       )}
 
+      {/* Diagnosis Section */}
+      {diagnosis && (
+        <div className="bg-white rounded-xl p-6 border">
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <FileText size={20} />
+            Diagnosis
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h3 className="font-medium mb-2">Symptoms</h3>
+              <p className="text-gray-700 bg-gray-50 p-3 rounded-lg">
+                {diagnosis.symptoms}
+              </p>
+            </div>
+            <div>
+              <h3 className="font-medium mb-2">Diagnosis</h3>
+              <p className="text-gray-700 bg-gray-50 p-3 rounded-lg">
+                {diagnosis.diagnosis}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Clinical Notes Section */}
+      <div className="bg-white rounded-xl p-6 border">
+        <ClinicalNotesEditor
+          medicalRecordId={recordData.id}
+          initialNotes={recordData.notes || ""}
+          canEdit={isDoctor}
+        />
+      </div>
+
       {/* Treatment Plan Section */}
       {recordData.treatment_plan && (
         <div className="bg-white rounded-xl p-6 border">
@@ -307,13 +300,29 @@ export default async function MedicalRecordPage({
         </div>
       )}
 
-      {/* Clinical Notes Section */}
       <div className="bg-white rounded-xl p-6 border">
-        <ClinicalNotesEditor
-          medicalRecordId={recordData.id}
-          initialNotes={recordData.notes || ""}
-          canEdit={isDoctor}
-        />
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <FileText size={20} />
+          Medications
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {diagnosis.prescribed_medications && (
+            <div>
+              <h3 className="font-medium mb-2">Prescribed Medications</h3>
+              <p className="text-gray-700 bg-gray-50 p-3 rounded-lg">
+                {diagnosis.prescribed_medications}
+              </p>
+            </div>
+          )}
+          {diagnosis.follow_up_plan && (
+            <div>
+              <h3 className="font-medium mb-2">Follow-up Plan</h3>
+              <p className="text-gray-700 bg-gray-50 p-3 rounded-lg">
+                {diagnosis.follow_up_plan}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Record Metadata */}
