@@ -4,6 +4,7 @@ import { useAuth, UserButton } from "@clerk/nextjs";
 import { Bell } from "lucide-react";
 import { usePathname } from "next/navigation";
 import React from "react";
+import { NotificationDropdown } from "./notification-dropdown";
 
 export const Navbar = () => {
   const user = useAuth();
@@ -31,13 +32,7 @@ export const Navbar = () => {
       </h1>
 
       <div className="flex items-center gap-4">
-        <div className="relative">
-          <Bell />
-          <p className="absolute -top-3 right-1 size-4 bg-red-600 text-white rounded-full text-[10px] text-center">
-            2
-          </p>
-        </div>
-
+        <NotificationDropdown />
         {user?.userId && <UserButton />}
       </div>
     </div>
