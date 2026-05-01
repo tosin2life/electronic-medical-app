@@ -1,6 +1,6 @@
 "use client";
 
-import { PatientCreateSchema } from "@/lib/schema";
+import { PatientFormSchema } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -57,12 +57,12 @@ export const PatientForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const form = useForm<z.infer<typeof PatientCreateSchema>>({
-    resolver: zodResolver(PatientCreateSchema),
+  const form = useForm<z.infer<typeof PatientFormSchema>>({
+    resolver: zodResolver(PatientFormSchema),
     defaultValues: {
       first_name: "",
       last_name: "",
-      date_of_birth: "",
+      date_of_birth: new Date(),
       gender: "MALE",
       phone: "",
       email: "",
@@ -84,7 +84,7 @@ export const PatientForm = () => {
     },
   });
 
-  const handleSubmit = async (values: z.infer<typeof PatientCreateSchema>) => {
+  const handleSubmit = async (values: any) => {
     try {
       setIsLoading(true);
       const resp = await createPatientFromForm(values);

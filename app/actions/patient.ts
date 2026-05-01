@@ -77,6 +77,9 @@ export async function createNewPatient(data: any, pid: string) {
       data: {
         ...patientData,
         id: patient_id,
+        privacy_consent: patientData.privacy_consent ?? false,
+        service_consent: patientData.service_consent ?? false,
+        medical_consent: patientData.medical_consent ?? false,
       },
     });
 
@@ -146,6 +149,9 @@ export async function createPatientFromForm(data: any) {
       data: {
         ...patientData,
         id: user.id,
+        privacy_consent: patientData.privacy_consent ?? false,
+        service_consent: patientData.service_consent ?? false,
+        medical_consent: patientData.medical_consent ?? false,
       },
     });
 

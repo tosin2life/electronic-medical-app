@@ -107,6 +107,7 @@ model Doctor {
   appointments          Appointment[]
   ratings               Rating[]
   diagnosis             Diagnosis[] 
+  medical_records       MedicalRecords[]
 
   created_at            DateTime @default(now())
   updated_at            DateTime @updatedAt
@@ -231,6 +232,7 @@ model MedicalRecords {
 
   appointment     Appointment @relation(fields: [appointment_id], references: [id], onDelete: Cascade)
   patient         Patient  @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  doctor          Doctor   @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
   lab_test        LabTest[]
   notes           String?
  

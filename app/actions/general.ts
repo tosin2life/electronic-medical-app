@@ -9,25 +9,70 @@ import { clerkClient } from "@clerk/nextjs/server";
 
 export async function deleteDataById(
   id: string,
-
-  deleteType: "doctor" | "staff" | "patient" | "payment" | "bill"
+  deleteType:
+    | "doctor"
+    | "staff"
+    | "patient"
+    | "payment"
+    | "bill"
+    | "medical_record"
 ) {
   let dbDeleteSuccess = false;
   try {
+    // First check if the record exists
+    let recordExists = false;
+
     switch (deleteType) {
       case "doctor":
-        await db.doctor.delete({ where: { id: id } });
-        dbDeleteSuccess = true;
+        recordExists =
+          (await db.doctor.findUnique({ where: { id: id } })) !== null;
+        if (recordExists) {
+          await db.doctor.delete({ where: { id: id } });
+          dbDeleteSuccess = true;
+        }
         break;
       case "staff":
-        await db.staff.delete({ where: { id: id } });
+        recordExists =
+          (await db.staff.findUnique({ where: { id: id } })) !== null;
+        if (recordExists) {
+          await db.staff.delete({ where: { id: id } });
+          dbDeleteSuccess = true;
+        }
         break;
       case "patient":
-        await db.patient.delete({ where: { id: id } });
+        recordExists =
+          (await db.patient.findUnique({ where: { id: id } })) !== null;
+        if (recordExists) {
+          await db.patient.delete({ where: { id: id } });
+          dbDeleteSuccess = true;
+        }
         break;
       case "payment":
-        await db.payment.delete({ where: { id: Number(id) } });
+        recordExists =
+          (await db.payment.findUnique({ where: { id: Number(id) } })) !== null;
+        if (recordExists) {
+          await db.payment.delete({ where: { id: Number(id) } });
+          dbDeleteSuccess = true;
+        }
         break;
+      case "medical_record":
+        recordExists =
+          (await db.medicalRecords.findUnique({
+            where: { id: Number(id) },
+          })) !== null;
+        if (recordExists) {
+          await db.medicalRecords.delete({ where: { id: Number(id) } });
+          dbDeleteSuccess = true;
+        }
+        break;
+    }
+
+    if (!recordExists) {
+      return {
+        success: false,
+        message: "Record not found",
+        status: 404,
+      };
     }
 
     if (
