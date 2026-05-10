@@ -1,4 +1,3 @@
-// import { AppointmentActionOptions } from "@/components/appointment-actions";
 import { AppointmentStatusIndicator } from "@/components/appointment-status-indicator";
 import { ProfileImage } from "@/components/profile-image";
 import SearchInput from "@/components/search-input";
@@ -10,8 +9,7 @@ import { getPatientAppointments } from "@/utils/services/appointment";
 import { auth } from "@clerk/nextjs/server";
 import { Appointment, Doctor, Patient } from "@prisma/client";
 import { format } from "date-fns";
-import { BriefcaseBusiness, Calendar } from "lucide-react";
-import React from "react";
+import { BriefcaseBusiness } from "lucide-react";
 import { Pagination } from "@/components/pagination";
 import { AppointmentContainer } from "@/components/appointment-container";
 import { AppointmentActionOptions } from "@/components/appointment-actions";
@@ -66,7 +64,7 @@ const Appointments = async (props: {
   const date = searchParams?.date || ""; // No default date - show all appointments
   const status = searchParams?.status || "all"; // Default to "all" statuses
 
-  let queryId = undefined;
+  let queryId: string | undefined = undefined;
 
   if (
     userRole == "admin" ||
@@ -84,7 +82,7 @@ const Appointments = async (props: {
     await getPatientAppointments({
       page,
       search: searchQuery,
-      id: queryId!,
+      id: queryId || undefined,
       date,
       status: status === "all" ? undefined : status,
     });
@@ -101,9 +99,9 @@ const Appointments = async (props: {
       >
         <td className="flex items-center gap-2 md:gap-4 py-2 xl:py-4">
           <ProfileImage
-            url={item?.patient?.img!}
+            url={item?.patient?.img || ""}
             name={patient_name}
-            bgColor={item?.patient?.colorCode!}
+            bgColor={item?.patient?.colorCode || ""}
           />
           <div>
             <h3 className="font-semibold uppercase">{patient_name}</h3>
@@ -121,9 +119,9 @@ const Appointments = async (props: {
         <td className="hidden  items-center py-2  md:table-cell">
           <div className="flex items-center  gap-2 md:gap-4">
             <ProfileImage
-              url={item.doctor?.img!}
+              url={item.doctor?.img || ""}
               name={item.doctor?.name}
-              bgColor={item?.doctor?.colorCode!}
+              bgColor={item?.doctor?.colorCode || ""}
               textClassName="text-black"
             />
 
@@ -137,13 +135,13 @@ const Appointments = async (props: {
         </td>
 
         <td className="hidden xl:table-cell">
-          <AppointmentStatusIndicator status={item.status!} />
+          <AppointmentStatusIndicator status={item.status || "PENDING"} />
         </td>
         <td>
           <div className="flex items-center gap-2">
             <ViewAppointment id={item?.id.toString()} />
             <AppointmentActionOptions
-              userId={userId!}
+              userId={userId || ""}
               patientId={item?.patient_id}
               doctorId={item?.doctor_id}
               status={item?.status}
@@ -173,7 +171,7 @@ const Appointments = async (props: {
             <SearchInput />
           </div>
 
-          {isPatient && <AppointmentContainer id={userId!} />}
+          {isPatient && <AppointmentContainer id={userId || ""} />}
         </div>
       </div>
 
@@ -182,9 +180,9 @@ const Appointments = async (props: {
 
         {data?.length > 0 && (
           <Pagination
-            totalRecords={totalRecord!}
-            currentPage={currentPage!}
-            totalPages={totalPages!}
+            totalRecords={totalRecord || 0}
+            currentPage={currentPage || 1}
+            totalPages={totalPages || 1}
             limit={DATA_LIMIT}
           />
         )}

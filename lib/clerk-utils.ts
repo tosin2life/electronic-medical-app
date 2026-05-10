@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 export interface ClerkError {
   code: string;
   message: string;
-  meta?: any;
+  meta?: Record<string, unknown>;
 }
 
 export interface ClerkUserData {
@@ -95,7 +95,7 @@ export async function createClerkUser(userData: {
 
     // Parse Clerk validation errors
     if (error && typeof error === "object" && "errors" in error) {
-      const errors = (error as any).errors;
+      const errors = (error as { errors: Array<{ code: string; message: string }> }).errors;
 
       if (Array.isArray(errors)) {
         for (const err of errors) {
@@ -122,8 +122,9 @@ export async function createClerkUser(userData: {
                 message: "Please enter a valid email address",
               };
 
-            case "form_param_invalid":
-              if (err.meta?.paramName === "firstName") {
+            case "form_param_invalid": {
+              const errWithMeta = err as { code: string; message: string; meta?: { paramName?: string } };
+              if (errWithMeta.meta?.paramName === "firstName") {
                 return {
                   success: false,
                   error: "INVALID_FIRST_NAME",
@@ -131,7 +132,7 @@ export async function createClerkUser(userData: {
                     "First name is required and must be at least 2 characters",
                 };
               }
-              if (err.meta?.paramName === "lastName") {
+              if (errWithMeta.meta?.paramName === "lastName") {
                 return {
                   success: false,
                   error: "INVALID_LAST_NAME",
@@ -140,6 +141,7 @@ export async function createClerkUser(userData: {
                 };
               }
               break;
+            }
           }
         }
       }
@@ -167,7 +169,11 @@ export async function updateClerkUser(
   try {
     const client = await clerkClient();
 
-    const updateData: any = {};
+    const updateData: {
+      firstName?: string;
+      lastName?: string;
+      publicMetadata?: { role: string };
+    } = {};
 
     if (updates.firstName !== undefined)
       updateData.firstName = updates.firstName;

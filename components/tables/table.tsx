@@ -1,9 +1,9 @@
 import React from "react";
 
-interface TableProps {
+interface TableProps<T = Record<string, unknown>> {
   columns: { header: string; key: string; className?: string }[];
-  renderRow: (item: any) => React.ReactNode;
-  data: any[];
+  renderRow: (item: T & { index: number }) => React.ReactNode;
+  data: T[];
 }
 
 export const Table = ({ columns, renderRow, data }: TableProps) => {

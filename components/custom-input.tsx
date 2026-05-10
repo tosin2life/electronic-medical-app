@@ -22,7 +22,7 @@ import { Switch } from "./ui/switch";
 
 interface InputProps {
   type: "input" | "select" | "checkbox" | "switch" | "radio" | "textarea";
-  control: Control<any>;
+  control: Control<Record<string, unknown>>;
   name: string;
   label?: string;
   placeholder?: string;
@@ -32,7 +32,7 @@ interface InputProps {
   step?: string;
 }
 
-const RenderInput = ({ field, props }: { field: any; props: InputProps }) => {
+const RenderInput = ({ field, props }: { field: Record<string, unknown>; props: InputProps }) => {
   switch (props.type) {
     case "input":
       return (
@@ -157,7 +157,7 @@ interface SwitchProps {
 }
 
 export const SwitchInput = ({ data, setWorkSchedule }: SwitchProps) => {
-  const handleChange = (day: string, field: any, value: string) => {
+  const handleChange = (day: string, field: string | boolean, value: string) => {
     setWorkSchedule((prevDays) => {
       const dayExist = prevDays.find((d) => d.day === day);
 
@@ -188,7 +188,7 @@ export const SwitchInput = ({ data, setWorkSchedule }: SwitchProps) => {
           <Switch
             id={el.value}
             className="data-[state=checked]:bg-blue-600 peer"
-            onCheckedChange={(e) => handleChange(el.value, true, "09:00")}
+            onCheckedChange={() => handleChange(el.value, true, "09:00")}
           />
           <Label htmlFor={el.value} className="w-20 capitalize">
             {el.value}

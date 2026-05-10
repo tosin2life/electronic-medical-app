@@ -63,9 +63,9 @@ export default async function DoctorsList(props: SearchParamsProps) {
     >
       <td className="flex items-center gap-4 p-4">
         <ProfileImage
-          url={doctor?.img!}
+          url={doctor?.img || ""}
           name={doctor?.name}
-          bgColor={doctor?.colorCode!}
+          bgColor={doctor?.colorCode || ""}
           textClassName="text-black"
         />
         <div>

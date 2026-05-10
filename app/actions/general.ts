@@ -17,7 +17,6 @@ export async function deleteDataById(
     | "bill"
     | "medical_record"
 ) {
-  let dbDeleteSuccess = false;
   try {
     // First check if the record exists
     let recordExists = false;
@@ -28,7 +27,6 @@ export async function deleteDataById(
           (await db.doctor.findUnique({ where: { id: id } })) !== null;
         if (recordExists) {
           await db.doctor.delete({ where: { id: id } });
-          dbDeleteSuccess = true;
         }
         break;
       case "staff":
@@ -36,7 +34,6 @@ export async function deleteDataById(
           (await db.staff.findUnique({ where: { id: id } })) !== null;
         if (recordExists) {
           await db.staff.delete({ where: { id: id } });
-          dbDeleteSuccess = true;
         }
         break;
       case "patient":
@@ -44,7 +41,6 @@ export async function deleteDataById(
           (await db.patient.findUnique({ where: { id: id } })) !== null;
         if (recordExists) {
           await db.patient.delete({ where: { id: id } });
-          dbDeleteSuccess = true;
         }
         break;
       case "payment":
@@ -52,7 +48,6 @@ export async function deleteDataById(
           (await db.payment.findUnique({ where: { id: Number(id) } })) !== null;
         if (recordExists) {
           await db.payment.delete({ where: { id: Number(id) } });
-          dbDeleteSuccess = true;
         }
         break;
       case "medical_record":
@@ -62,7 +57,6 @@ export async function deleteDataById(
           })) !== null;
         if (recordExists) {
           await db.medicalRecords.delete({ where: { id: Number(id) } });
-          dbDeleteSuccess = true;
         }
         break;
     }

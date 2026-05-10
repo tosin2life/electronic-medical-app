@@ -84,25 +84,6 @@ const ClinicalNotesSchema = z.object({
 
 type ClinicalNotesFormData = z.infer<typeof ClinicalNotesSchema>;
 
-// Input type for form (before validation)
-type ClinicalNotesInput = {
-  treatment_plan: string;
-  prescriptions?: string;
-  lab_request?: string;
-  notes?: string;
-  symptoms: string;
-  diagnosis: string;
-  prescribed_medications?: string;
-  follow_up_plan?: string;
-  body_temperature: string | number;
-  systolic: string | number;
-  diastolic: string | number;
-  heartRate: string;
-  respiratory_rate: string | number | undefined;
-  oxygen_saturation: string | number | undefined;
-  weight: string | number;
-  height: string | number;
-};
 
 interface ClinicalNotesFormProps {
   appointmentId: number;
@@ -140,7 +121,7 @@ export const ClinicalNotesForm = ({
     },
   });
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: ClinicalNotesFormData) => {
     try {
       setIsLoading(true);
       const resp = await createMedicalRecord({

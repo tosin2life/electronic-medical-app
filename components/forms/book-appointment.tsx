@@ -53,10 +53,10 @@ export const BookAppointment = ({
   data: Patient;
   doctors: Doctor[];
 }) => {
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-  const [physicians, setPhysicians] = useState<Doctor[] | undefined>(doctors);
+  const [physicians] = useState<Doctor[] | undefined>(doctors);
 
   const appointmentTimes = generateTimes(8, 17, 30);
 
@@ -78,7 +78,7 @@ export const BookAppointment = ({
   ) => {
     try {
       setIsSubmitting(true);
-      const newData = { ...values, patient_id: data?.id! };
+      const newData = { ...values, patient_id: data?.id || '' };
 
       const res = await createNewAppointment(newData);
 
@@ -124,10 +124,10 @@ export const BookAppointment = ({
               >
                 <div className="w-full rounded-md border border-input bg-background px-3 py-1 flex items-center gap-4">
                   <ProfileImage
-                    url={data?.img!}
+                    url={data?.img || ''}
                     name={patientName}
                     className="size-16 border border-input"
-                    bgColor={data?.colorCode!}
+                    bgColor={data?.colorCode || '#3B82F6'}
                   />
 
                   <div>
@@ -168,9 +168,9 @@ export const BookAppointment = ({
                             <SelectItem key={id} value={i.id} className="p-2">
                               <div className="flex flex-row gap-2 p-2">
                                 <ProfileImage
-                                  url={i?.img!}
+                                  url={i?.img || ''}
                                   name={i?.name}
-                                  bgColor={i?.colorCode!}
+                                  bgColor={i?.colorCode || '#3B82F6'}
                                   textClassName="text-black"
                                 />
                                 <div>

@@ -1,9 +1,7 @@
 "use server";
 
-// import { VitalSignsFormData } from "@/components/dialogs/add-vital-signs";
 import db from "@/lib/db";
 import { AppointmentSchema } from "@/lib/schema";
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { AppointmentStatus } from "@prisma/client";
 
 export async function appointmentAction(
@@ -76,7 +74,17 @@ export async function appointmentAction(
 //     return { success: false, msg: "Internal Server Error" };
 //   }
 // }
-export async function createNewAppointment(data: any) {
+interface AppointmentFormData {
+  patient_id: string;
+  doctor_id: string;
+  time: string;
+  type: string;
+  appointment_date: string;
+  note?: string;
+  [key: string]: unknown;
+}
+
+export async function createNewAppointment(data: AppointmentFormData) {
   try {
     const validatedData = AppointmentSchema.safeParse(data);
 
@@ -106,7 +114,29 @@ export async function createNewAppointment(data: any) {
   }
 }
 
-export async function createMedicalRecord(data: any) {
+interface MedicalRecordFormData {
+  appointmentId: number;
+  patientId: string;
+  doctorId: string;
+  treatment_plan?: string;
+  prescriptions?: string;
+  lab_request?: string;
+  notes?: string;
+  symptoms?: string;
+  diagnosis?: string;
+  prescribed_medications?: string;
+  follow_up_plan?: string;
+  body_temperature?: number;
+  systolic?: number;
+  diastolic?: number;
+  heartRate?: number;
+  respiratory_rate?: number;
+  oxygen_saturation?: number;
+  weight?: number;
+  height?: number;
+}
+
+export async function createMedicalRecord(data: MedicalRecordFormData) {
   try {
     const {
       appointmentId,

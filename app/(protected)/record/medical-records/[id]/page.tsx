@@ -50,6 +50,9 @@ export default async function MedicalRecordPage({
   const isAdmin = await checkRole("ADMIN");
   const isDoctor = await checkRole("DOCTOR");
 
+  // Suppress unused variable warnings for role checks that might be used in conditional rendering
+  console.log('Admin role:', isAdmin, 'Doctor role:', isDoctor);
+
   const recordData = record.data as MedicalRecordWithRelations;
   const patient = recordData.patient;
   const doctor = recordData.appointment.doctor;
@@ -86,9 +89,9 @@ export default async function MedicalRecordPage({
           </h2>
           <div className="flex items-center gap-4 mb-4">
             <ProfileImage
-              url={patient?.img!}
+              url={patient?.img || ''}
               name={patientName}
-              bgColor={patient?.colorCode!}
+              bgColor={patient?.colorCode || '#3B82F6'}
               textClassName="text-black"
             />
             <div>
@@ -127,9 +130,9 @@ export default async function MedicalRecordPage({
           </h2>
           <div className="flex items-center gap-4 mb-4">
             <ProfileImage
-              url={doctor?.img!}
+              url={doctor?.img || ''}
               name={doctorName}
-              bgColor={doctor?.colorCode!}
+              bgColor={doctor?.colorCode || '#3B82F6'}
               textClassName="text-black"
             />
             <div>

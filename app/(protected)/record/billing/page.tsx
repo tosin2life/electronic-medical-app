@@ -94,9 +94,9 @@ const BillingPage = async (props: SearchParamsProps) => {
         <td># {item?.id}</td>
         <td className="flex items-center gap-4 p-4">
           <ProfileImage
-            url={item?.patient?.img!}
+            url={item?.patient?.img || ""}
             name={name}
-            bgColor={patient?.colorCode!}
+            bgColor={patient?.colorCode || ""}
             textClassName="text-black"
           />
           <div>
@@ -109,14 +109,14 @@ const BillingPage = async (props: SearchParamsProps) => {
           {format(item?.bill_date, "yyyy-MM-dd")}
         </td>
         <td className="hidden xl:table-cell">
-          {item?.total_amount?.toFixed(2)}
+          {(item?.total_amount || 0).toFixed(2)}
         </td>
-        <td className="hidden xl:table-cell">{item?.discount?.toFixed(2)}</td>
+        <td className="hidden xl:table-cell">{(item?.discount || 0).toFixed(2)}</td>
         <td className="hidden xl:table-cell">
-          {(item?.total_amount - item?.discount).toFixed(2)}
+          {((item?.total_amount || 0) - (item?.discount || 0)).toFixed(2)}
         </td>
         <td className="hidden xl:table-cell">
-          {(item?.amount_paid).toFixed(2)}
+          {(item?.amount_paid || 0).toFixed(2)}
         </td>
         <td className="hidden xl:table-cell">
           <span

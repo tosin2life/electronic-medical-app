@@ -2,9 +2,8 @@
 
 import { useUser } from "@clerk/nextjs";
 import { Patient } from "@prisma/client";
-import { Phone } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -34,15 +33,15 @@ interface DataProps {
 export const NewPatient = ({ data, type }: DataProps) => {
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
-  const [imgURL, setImgURL] = useState<any>();
+  // const [imgURL, setImgURL] = useState<any>();
   const router = useRouter();
 
-  const userData = {
+  const userData = useMemo(() => ({
     first_name: user?.firstName || "",
     last_name: user?.lastName || "",
     email: user?.emailAddresses[0].emailAddress || "",
     phone: user?.phoneNumbers?.toString() || "",
-  };
+  }), [user]);
 
   const userId = user?.id;
 
@@ -82,8 +81,8 @@ export const NewPatient = ({ data, type }: DataProps) => {
 
     const res =
       type === "create"
-        ? await createNewPatient(values, userId!)
-        : await updatePatient(values, userId!);
+        ? await createNewPatient(values, userId || '')
+        : await updatePatient(values, userId || '');
 
     setLoading(false);
 
@@ -98,9 +97,11 @@ export const NewPatient = ({ data, type }: DataProps) => {
   };
   useEffect(() => {
     if (type === "create") {
-      userData && form.reset({ ...userData });
+      if (userData) {
+        form.reset({ ...userData });
+      }
     } else if (type === "update") {
-      data &&
+      if (data) {
         form.reset({
           first_name: data.first_name,
           last_name: data.last_name,
@@ -123,18 +124,19 @@ export const NewPatient = ({ data, type }: DataProps) => {
             | "husband"
             | "wife"
             | "other",
-          blood_group: data?.blood_group!,
-          allergies: data?.allergies! || "",
-          medical_conditions: data?.medical_conditions! || "",
-          medical_history: data?.medical_history! || "",
-          insurance_number: data.insurance_number! || "",
-          insurance_provider: data.insurance_provider! || "",
+          blood_group: data?.blood_group || "",
+          allergies: data?.allergies || "",
+          medical_conditions: data?.medical_conditions || "",
+          medical_history: data?.medical_history || "",
+          insurance_number: data.insurance_number || "",
+          insurance_provider: data.insurance_provider || "",
           medical_consent: data.medical_consent,
           privacy_consent: data.privacy_consent,
           service_consent: data.service_consent,
         });
+      }
     }
-  }, [user]);
+  }, [user, data, form, type, userData]);
 
   return (
     <Card className="max-w-6xl w-full p-4 ">

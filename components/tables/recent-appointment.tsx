@@ -125,14 +125,14 @@ import Link from "next/link";
 import React from "react";
 import { Button } from "../ui/button";
 import { Table } from "./table";
-import { Appointment } from "@/types/data-types";
+import { AppointmentWithDetails } from "@/types/data-types";
 import { ProfileImage } from "../profile-image";
 import { format } from "date-fns";
 import { AppointmentStatusIndicator } from "../appointment-status-indicator";
 import { ViewAppointment } from "../view-appointment";
 
 interface DataProps {
-  data: any[];
+  data: AppointmentWithDetails[];
 }
 const columns = [
   { header: "Info", key: "name" },
@@ -162,7 +162,7 @@ const columns = [
   },
 ];
 export const RecentAppointments = ({ data }: DataProps) => {
-  const renderRow = (item: Appointment) => {
+  const renderRow = (item: AppointmentWithDetails) => {
     const name = item?.patient?.first_name + " " + item?.patient?.last_name;
     return (
       <tr
@@ -171,10 +171,10 @@ export const RecentAppointments = ({ data }: DataProps) => {
       >
         <td className="flex items-center gap-2 2xl:gap-4 py-2 xl:py-4">
           <ProfileImage
-            url={item?.patient?.img!}
+            url={item?.patient?.img || ''}
             name={name}
             className="bg-violet-600"
-            bgColor={item?.patient?.colorCode!}
+            bgColor={item?.patient?.colorCode || '#8B5CF6'}
           />
           <div>
             <h3 className="text-sm md:text-base md:font-medium uppercase">
@@ -196,10 +196,10 @@ export const RecentAppointments = ({ data }: DataProps) => {
           "
           >
             <ProfileImage
-              url={item?.doctor?.img!}
+              url={item?.doctor?.img || ''}
               name={item?.doctor?.name}
               className="bg-blue-600"
-              bgColor={item?.doctor?.colorCode!}
+              bgColor={item?.doctor?.colorCode || '#3B82F6'}
               textClassName="text-black font-medium"
             />
             <div>

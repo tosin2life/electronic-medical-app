@@ -16,7 +16,7 @@ import {
   Diagnosis,
 } from "@prisma/client";
 import { format } from "date-fns";
-import { FileText, User, Calendar } from "lucide-react";
+import { FileText } from "lucide-react";
 import React from "react";
 
 interface MedicalRecordWithRelations extends MedicalRecords {
@@ -80,9 +80,9 @@ export default async function MedicalRecordsList(props: SearchParamsProps) {
     >
       <td className="flex items-center gap-4 p-4">
         <ProfileImage
-          url={record?.patient?.img!}
+          url={record?.patient?.img || ""}
           name={`${record?.patient?.first_name} ${record?.patient?.last_name}`}
-          bgColor={record?.patient?.colorCode!}
+          bgColor={record?.patient?.colorCode || ""}
           textClassName="text-black"
         />
         <div>
@@ -97,9 +97,9 @@ export default async function MedicalRecordsList(props: SearchParamsProps) {
       <td className="hidden md:table-cell">
         <div className="flex items-center gap-2">
           <ProfileImage
-            url={record?.appointment?.doctor?.img!}
+            url={record?.appointment?.doctor?.img || ""}
             name={record?.appointment?.doctor?.name}
-            bgColor={record?.appointment?.doctor?.colorCode!}
+            bgColor={record?.appointment?.doctor?.colorCode || ""}
             textClassName="text-black"
           />
           <span className="text-sm">{record?.appointment?.doctor?.name}</span>

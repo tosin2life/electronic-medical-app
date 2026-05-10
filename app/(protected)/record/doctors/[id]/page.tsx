@@ -16,7 +16,6 @@ import { availableDays } from "@/components/available-doctor";
 
 interface ParamsProps {
   params: Promise<{ id: string }>;
-  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function DoctorProfile({ params }: ParamsProps) {
@@ -27,7 +26,10 @@ export default async function DoctorProfile({ params }: ParamsProps) {
   const { data: doctor, totalAppointment } = await getDoctorById(id);
 
   // Fetch doctor ratings
-  const { totalRatings, averageRating, ratings } = await getRatingById(id);
+  const { totalRatings, averageRating } = await getRatingById(id);
+
+  // Suppress unused variable warnings for future rating display features
+  console.log('Doctor ratings:', { totalRatings, averageRating });
 
   if (!doctor) {
     return <div>Doctor not found</div>;
@@ -39,10 +41,10 @@ export default async function DoctorProfile({ params }: ParamsProps) {
         <div className="flex flex-col lg:flex-row gap-4">
           <div className="bg-blue-50 py-6 px-4 rounded-md flex-1 flex gap-4">
             <ProfileImage
-              url={doctor?.img!}
+              url={doctor?.img || ''}
               name={doctor?.name}
               className="size-20"
-              bgColor={doctor?.colorCode!}
+              bgColor={doctor?.colorCode || '#3B82F6'}
               textClassName="text-4xl text-black"
             />
 

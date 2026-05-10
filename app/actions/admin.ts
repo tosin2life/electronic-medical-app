@@ -3,7 +3,19 @@ import db from "@/lib/db";
 import { DoctorSchema, WorkingDaysSchema, StaffSchema } from "@/lib/schema";
 import { createClerkUser, validatePassword } from "@/lib/clerk-utils";
 
-export async function createNewDoctor(data: any) {
+interface DoctorFormData {
+  name: string;
+  email: string;
+  password: string;
+  work_schedule?: Array<{
+    day: string;
+    start_time: string;
+    close_time: string;
+  }>;
+  [key: string]: unknown;
+}
+
+export async function createNewDoctor(data: DoctorFormData) {
   try {
     const values = DoctorSchema.safeParse(data);
 
@@ -18,7 +30,7 @@ export async function createNewDoctor(data: any) {
     }
 
     const validatedValues = values.data;
-    const workingDayData = workingDaysValues.data!;
+    const workingDayData = workingDaysValues.data;
 
     // Split name into first and last name, handling cases where there's no space
     const nameParts = validatedValues.name.trim().split(" ");
@@ -71,7 +83,8 @@ export async function createNewDoctor(data: any) {
       };
     }
 
-    const { password, ...doctorData } = validatedValues;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password, ...doctorData } = validatedValues;
 
     const doctor = await db.doctor.create({
       data: {
@@ -80,13 +93,15 @@ export async function createNewDoctor(data: any) {
       },
     });
 
-    await Promise.all(
-      workingDayData?.map((el) =>
-        db.workingDays.create({
-          data: { ...el, doctor_id: doctor.id },
-        })
-      )
-    );
+    if (workingDayData) {
+      await Promise.all(
+        workingDayData.map((el) =>
+          db.workingDays.create({
+            data: { ...el, doctor_id: doctor.id },
+          })
+        )
+      );
+    }
 
     return {
       success: true,
@@ -99,7 +114,14 @@ export async function createNewDoctor(data: any) {
   }
 }
 
-export async function createNewStaff(data: any) {
+interface StaffFormData {
+  name: string;
+  email: string;
+  password: string;
+  [key: string]: unknown;
+}
+
+export async function createNewStaff(data: StaffFormData) {
   try {
     const values = StaffSchema.safeParse(data);
 
@@ -164,9 +186,10 @@ export async function createNewStaff(data: any) {
       };
     }
 
-    const { password, ...staffData } = validatedValues;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password, ...staffData } = validatedValues;
 
-    const staff = await db.staff.create({
+    await db.staff.create({
       data: {
         ...staffData,
         id: user.id,

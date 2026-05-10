@@ -1,7 +1,7 @@
 import { Star } from "lucide-react";
 import React from "react";
 
-interface DataProps {
+interface RatingData {
   id: number;
   staff_id: string;
   rating: number;
@@ -10,7 +10,7 @@ interface DataProps {
   patient: { last_name: string; first_name: string };
 }
 
-export const RatingList = ({ data }: { data: any[] }) => {
+export const RatingList = ({ data }: { data: RatingData[] }) => {
   return (
     <div className="bg-white rounded-lg">
       <div className="flex items-center justify-between p-4">
@@ -18,7 +18,7 @@ export const RatingList = ({ data }: { data: any[] }) => {
       </div>
 
       <div className="space-y-2 p-2">
-        {data?.map((rate, id) => (
+        {data?.map((rate) => (
           <div key={rate?.id} className="even:bg-gray-50 p-3 rounded">
             <div className="flex justify-between">
               <div className="flex items-center gap-4">

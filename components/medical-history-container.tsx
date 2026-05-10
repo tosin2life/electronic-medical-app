@@ -7,7 +7,7 @@ interface DataProps {
   patientId: string;
 }
 
-export const MedicalHistoryContainer = async ({ id, patientId }: DataProps) => {
+export const MedicalHistoryContainer = async ({ patientId }: DataProps) => {
   const data = await db.medicalRecords.findMany({
     where: { patient_id: patientId },
     include: {

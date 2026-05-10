@@ -84,7 +84,7 @@ export const PatientForm = () => {
     },
   });
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: z.infer<typeof PatientFormSchema>) => {
     try {
       setIsLoading(true);
       const resp = await createPatientFromForm(values);

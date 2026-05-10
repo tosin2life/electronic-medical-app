@@ -64,9 +64,9 @@ const StaffList = async (props: SearchParamsProps) => {
     >
       <td className="flex items-center gap-4 p-4">
         <ProfileImage
-          url={item?.img!}
+          url={item?.img || ""}
           name={item?.name}
-          bgColor={item?.colorCode!}
+          bgColor={item?.colorCode || ""}
           textClassName="text-black"
         />
         <div>

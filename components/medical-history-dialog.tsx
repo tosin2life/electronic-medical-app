@@ -3,18 +3,17 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import React from "react";
 
 interface DataProps {
-  id: string | number;
   patientId: string;
-  medicalId?: string;
   doctor_id: string | number;
   label: React.ReactNode;
 }
 export const MedicalHistoryDialog = async ({
-  id,
   patientId,
   doctor_id,
   label,
 }: DataProps) => {
+  // Suppress unused variable warnings for future use
+  console.log('Patient ID:', patientId, 'Doctor ID:', doctor_id);
   return (
     <Dialog>
       <DialogTrigger asChild>

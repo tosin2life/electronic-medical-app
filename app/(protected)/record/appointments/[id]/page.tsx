@@ -1,5 +1,4 @@
 import { AppointmentActionOptions } from "@/components/appointment-actions";
-import { ClinicalNotesForm } from "@/components/forms/clinical-notes-form";
 import { ProfileImage } from "@/components/profile-image";
 import { checkRole } from "@/utils/roles";
 import { getAppointmentById } from "@/utils/services/appointment";
@@ -233,7 +232,7 @@ export default async function AppointmentPage({
           <div className="text-center py-8 text-gray-500">
             <p>Medical records will be displayed here once created.</p>
             <p className="text-sm mt-2">
-              Use the "Add Clinical Notes" button above to create medical
+              Use the &quot;Add Clinical Notes&quot; button above to create medical
               records.
             </p>
           </div>

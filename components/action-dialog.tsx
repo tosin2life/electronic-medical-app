@@ -20,7 +20,18 @@ import { SmallCard } from "./small-card";
 interface ActionDialogProps {
   type: "doctor" | "staff" | "delete";
   id: string;
-  data?: any;
+  data?: {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    address?: string;
+    role: string;
+    department?: string;
+    license_number?: string;
+    img?: string;
+    colorCode?: string;
+  };
   deleteType?:
     | "doctor"
     | "staff"
@@ -43,7 +54,7 @@ export const ActionDialog = ({
       try {
         setLoading(true);
 
-        const res = await deleteDataById(id, deleteType!);
+        const res = await deleteDataById(id, deleteType || "patient");
 
         if (res.success) {
           toast.success("Record deleted successfully");
@@ -126,10 +137,10 @@ export const ActionDialog = ({
           <div className="flex justify-between">
             <div className="flex gap-3 items-center">
               <ProfileImage
-                url={data?.img!}
+                url={data?.img || ""}
                 name={data?.name}
                 className="xl:size-20"
-                bgColor={data?.colorCode!}
+                bgColor={data?.colorCode || ""}
                 textClassName="xl:text-2xl"
               />
 

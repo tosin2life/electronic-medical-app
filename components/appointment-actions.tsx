@@ -7,7 +7,6 @@ import Link from "next/link";
 import { AppointmentActionDialog } from "./appointment-action-dialog";
 
 interface ActionsProps {
-  userId: string;
   status: string;
   patientId: string;
   doctorId: string;
@@ -15,7 +14,6 @@ interface ActionsProps {
 }
 
 export const AppointmentActionOptions = async ({
-  userId,
   patientId,
   doctorId,
   status,

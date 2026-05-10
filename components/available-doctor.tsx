@@ -6,7 +6,6 @@ import Link from "next/link";
 import { Card } from "./ui/card";
 import { ProfileImage } from "./profile-image";
 import { daysOfWeek } from "@/utils";
-import { cn } from "@/lib/utils";
 
 const getToday = () => {
   const today = new Date().getDay();
@@ -63,7 +62,7 @@ export const AvailableDoctors = async ({ data }: DataProps) => {
               name={doc?.name}
               className={`md:flex min-w-14 min-h-14 md:min-w-16 md:min-h-16`}
               textClassName="text-2xl font-semibold text-black"
-              bgColor={doc?.colorCode!}
+              bgColor={doc?.colorCode || '#3B82F6'}
             />
             <div>
               <h2 className="font-semibold text-lg md:text-xl">{doc?.name}</h2>

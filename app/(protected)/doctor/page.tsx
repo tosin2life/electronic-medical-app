@@ -87,7 +87,7 @@ export default async function DoctorDashboard() {
               <StatCard
                 key={index}
                 title={el?.title}
-                value={el?.value!}
+                value={el?.value || 0}
                 icon={el?.icon}
                 className={el?.className}
                 iconClassName={el?.iconClassName}
@@ -113,7 +113,7 @@ export default async function DoctorDashboard() {
           <StatSummary data={appointmentCounts} total={totalAppointment!} />
         </div>
 
-        <AvailableDoctors data={availableDoctors as any} />
+        <AvailableDoctors data={availableDoctors} />
       </div>
     </div>
   );

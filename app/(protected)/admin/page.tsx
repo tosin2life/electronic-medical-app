@@ -100,7 +100,7 @@ export default async function AdminDashBoard() {
           <StatSummary data={appointmentCounts} total={totalAppointments!} />
         </div>
 
-        <AvailableDoctors data={availableDoctors as any} />
+        <AvailableDoctors data={availableDoctors} />
       </div>
     </div>
   );

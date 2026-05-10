@@ -6,7 +6,14 @@ import { ResponsiveContainer, RadialBarChart, RadialBar } from "recharts";
 import { Users } from "lucide-react";
 import { formatNumber } from "@/utils";
 
-export const StatSummary = ({ data, total }: { data: any; total: number }) => {
+interface AppointmentData {
+  PENDING?: number;
+  SCHEDULED?: number;
+  COMPLETED?: number;
+  [key: string]: number | undefined;
+}
+
+export const StatSummary = ({ data, total }: { data: AppointmentData; total: number }) => {
   const dataInfo = [
     { name: "Total", count: total || 0, fill: "white" },
     {

@@ -4,7 +4,18 @@ import db from "@/lib/db";
 import { PatientFormSchema } from "@/lib/schema";
 import { clerkClient } from "@clerk/nextjs/server";
 
-export async function updatePatient(data: any, pid: string) {
+interface PatientFormData {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  privacy_consent?: boolean;
+  service_consent?: boolean;
+  medical_consent?: boolean;
+  [key: string]: unknown;
+}
+
+export async function updatePatient(data: PatientFormData, pid: string) {
   try {
     const validateData = PatientFormSchema.safeParse(data);
 
@@ -36,12 +47,16 @@ export async function updatePatient(data: any, pid: string) {
       error: false,
       msg: "Patient info updated successfully",
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error);
-    return { success: false, error: true, msg: error?.message };
+    return {
+      success: false,
+      error: true,
+      msg: error instanceof Error ? error.message : 'An unknown error occurred'
+    };
   }
 }
-export async function createNewPatient(data: any, pid: string) {
+export async function createNewPatient(data: PatientFormData, pid: string) {
   try {
     const validateData = PatientFormSchema.safeParse(data);
 
@@ -84,13 +99,17 @@ export async function createNewPatient(data: any, pid: string) {
     });
 
     return { success: true, error: false, msg: "Patient created successfully" };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error);
-    return { success: false, error: true, msg: error?.message };
+    return {
+      success: false,
+      error: true,
+      msg: error instanceof Error ? error.message : 'An unknown error occurred'
+    };
   }
 }
 
-export async function createPatientFromForm(data: any) {
+export async function createPatientFromForm(data: PatientFormData) {
   try {
     const validateData = PatientFormSchema.safeParse(data);
 
@@ -160,15 +179,16 @@ export async function createPatientFromForm(data: any) {
       error: false,
       message: "Patient created successfully",
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.log("Clerk error details:", error);
 
     // Parse Clerk validation errors and return user-friendly messages
     if (error && typeof error === "object" && "errors" in error) {
-      console.log("Validation errors:", error.errors);
+      const clerkError = error as { errors?: Array<{ code?: string; meta?: { paramName?: string }; message?: string }> };
+      console.log("Validation errors:", clerkError.errors);
 
-      if (Array.isArray(error.errors)) {
-        for (const err of error.errors) {
+      if (Array.isArray(clerkError.errors)) {
+        for (const err of clerkError.errors) {
           // Handle password validation errors
           if (err.code === "form_password_policy_violation") {
             return {
@@ -223,11 +243,11 @@ export async function createPatientFromForm(data: any) {
         }
 
         // If no specific error was matched, return the first error message
-        if (error.errors.length > 0) {
+        if (clerkError.errors && clerkError.errors.length > 0) {
           return {
             error: true,
             success: false,
-            message: error.errors[0].message || "Validation error occurred",
+            message: clerkError.errors[0].message || "Validation error occurred",
           };
         }
       }
@@ -236,7 +256,7 @@ export async function createPatientFromForm(data: any) {
     return {
       success: false,
       error: true,
-      message: error?.message || "Something went wrong",
+      message: error instanceof Error ? error.message : "Something went wrong",
     };
   }
 }
