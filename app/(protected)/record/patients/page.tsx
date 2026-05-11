@@ -7,7 +7,7 @@ import { Table } from "@/components/tables/table";
 import { SearchParamsProps } from "@/types";
 import { checkRole } from "@/utils/roles";
 import { DATA_LIMIT } from "@/utils/settings";
-import { Patient } from "@prisma/client";
+import type { Patient } from "@prisma/client";
 import { format } from "date-fns";
 import { UserPen, Users } from "lucide-react";
 import React from "react";

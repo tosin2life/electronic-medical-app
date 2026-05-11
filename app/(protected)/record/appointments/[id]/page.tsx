@@ -2,7 +2,7 @@ import { AppointmentActionOptions } from "@/components/appointment-actions";
 import { ProfileImage } from "@/components/profile-image";
 import { checkRole } from "@/utils/roles";
 import { getAppointmentById } from "@/utils/services/appointment";
-import { Appointment, Doctor, Patient } from "@prisma/client";
+import type { Appointment, Doctor, Patient } from "@prisma/client";
 import { format } from "date-fns";
 import {
   ArrowLeft,

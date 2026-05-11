@@ -1,4 +1,4 @@
-import { AppointmentStatus, Doctor, Patient, Gender } from "@prisma/client";
+import type { AppointmentStatus, Doctor, Patient, Gender } from "@prisma/client";
 
 export type AppointmentsChartProps = {
   name: string;

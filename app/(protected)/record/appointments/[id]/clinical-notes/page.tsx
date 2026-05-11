@@ -1,7 +1,7 @@
 import { ClinicalNotesForm } from "@/components/forms/clinical-notes-form";
 import { getAppointmentById } from "@/utils/services/appointment";
 import { checkRole } from "@/utils/roles";
-import { Appointment, Doctor, Patient } from "@prisma/client";
+import type { Appointment, Doctor, Patient } from "@prisma/client";
 import { ArrowLeft, FileText } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";

@@ -8,7 +8,7 @@ import { SearchParamsProps } from "@/types";
 import { checkRole } from "@/utils/roles";
 import { DATA_LIMIT } from "@/utils/settings";
 import { getAllStaff } from "@/utils/services/staff";
-import { Staff } from "@prisma/client";
+import type { Staff } from "@prisma/client";
 import { format } from "date-fns";
 import { Users } from "lucide-react";
 import React from "react";

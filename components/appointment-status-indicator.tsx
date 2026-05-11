@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { AppointmentStatus } from "@prisma/client";
+import type { AppointmentStatus } from "@prisma/client";
 
 const status_color = {
   PENDING: "bg-yellow-600/15 text-yellow-600",

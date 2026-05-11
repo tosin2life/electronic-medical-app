@@ -7,7 +7,7 @@ import { checkRole, getRole } from "@/utils/roles";
 import { DATA_LIMIT } from "@/utils/settings";
 import { getPatientAppointments } from "@/utils/services/appointment";
 import { auth } from "@clerk/nextjs/server";
-import { AppointmentStatus } from "@prisma/client";
+import type { AppointmentStatus } from "@prisma/client";
 import { format } from "date-fns";
 import { BriefcaseBusiness } from "lucide-react";
 import { Pagination } from "@/components/pagination";

@@ -1,6 +1,6 @@
 "use client";
 
-import { AppointmentStatus } from "@prisma/client";
+import type { AppointmentStatus } from "@prisma/client";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "./ui/button";

@@ -1,4 +1,4 @@
-import { Diagnosis, LabTest, MedicalRecords, Patient } from "@prisma/client";
+import type { Diagnosis, LabTest, MedicalRecords, Patient } from "@prisma/client";
 import { BriefcaseBusiness } from "lucide-react";
 import React from "react";
 import { Table } from "./tables/table";

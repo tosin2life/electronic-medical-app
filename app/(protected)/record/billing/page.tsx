@@ -9,7 +9,7 @@ import { SearchParamsProps } from "@/types";
 import { checkRole } from "@/utils/roles";
 import { DATA_LIMIT } from "@/utils/settings";
 import { getPaymentRecords } from "@/utils/services/payment";
-import { Payment } from "@prisma/client";
+import type { Payment } from "@prisma/client";
 import { format } from "date-fns";
 import { ReceiptText } from "lucide-react";
 

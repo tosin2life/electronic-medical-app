@@ -3,7 +3,7 @@
 import { AppointmentSchema } from "@/lib/schema";
 import { generateTimes } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Doctor, Patient } from "@prisma/client";
+import type { Doctor, Patient } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { Patient } from "@prisma/client";
+import type { Patient } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState, useMemo } from "react";
 import {

@@ -9,7 +9,7 @@ import { SearchParamsProps } from "@/types";
 import { checkRole } from "@/utils/roles";
 import { getAllDoctors } from "@/utils/services/doctor";
 import { DATA_LIMIT } from "@/utils/settings";
-import { Doctor } from "@prisma/client";
+import type { Doctor } from "@prisma/client";
 import { format } from "date-fns";
 import { Users } from "lucide-react";
 import React from "react";

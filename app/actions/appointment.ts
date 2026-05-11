@@ -2,7 +2,7 @@
 
 import db from "@/lib/db";
 import { AppointmentSchema } from "@/lib/schema";
-import { AppointmentStatus } from "@prisma/client";
+import type { AppointmentStatus } from "@prisma/client";
 
 export async function appointmentAction(
   id: string | number,
