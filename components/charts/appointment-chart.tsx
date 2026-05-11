@@ -14,7 +14,7 @@ import {
 } from "recharts";
 
 interface DataProps {
-  data: AppointmentsChartProps;
+  data: AppointmentsChartProps | undefined;
 }
 export const AppointmentChart = ({ data }: DataProps) => {
   return (
@@ -24,7 +24,7 @@ export const AppointmentChart = ({ data }: DataProps) => {
       </div>
 
       <ResponsiveContainer width={"100%"} height="90%">
-        <BarChart width={100} height={300} data={data} barSize={25}>
+        <BarChart width={100} height={300} data={data ?? []} barSize={25}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ddd" />
 
           <XAxis

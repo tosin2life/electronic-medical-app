@@ -13,12 +13,12 @@ interface AppointmentData {
   [key: string]: number | undefined;
 }
 
-export const StatSummary = ({ data, total }: { data: AppointmentData; total: number }) => {
+export const StatSummary = ({ data, total }: { data: AppointmentData | undefined; total: number | undefined }) => {
   const dataInfo = [
     { name: "Total", count: total || 0, fill: "white" },
     {
       name: "Appointments",
-      count: data?.PENDING + data?.SCHEDULED || 0,
+      count: (data?.PENDING ?? 0) + (data?.SCHEDULED ?? 0),
       fill: "#000000",
     },
     { name: "Consultation", count: data?.COMPLETED || 0, fill: "#2563eb" },

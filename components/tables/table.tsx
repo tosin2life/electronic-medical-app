@@ -6,7 +6,7 @@ interface TableProps<T = Record<string, unknown>> {
   data: T[];
 }
 
-export const Table = ({ columns, renderRow, data }: TableProps) => {
+export const Table = <T = Record<string, unknown>>({ columns, renderRow, data }: TableProps<T>) => {
   //   console.log(data);
   return (
     <table className="w-full mt-4">

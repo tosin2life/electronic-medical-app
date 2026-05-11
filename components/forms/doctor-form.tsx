@@ -74,7 +74,11 @@ export const DoctorForm = () => {
       setIsLoading(true);
       const resp = await createNewDoctor({
         ...values,
-        work_schedule: workSchedule,
+        work_schedule: workSchedule.map((d) => ({
+          day: d.day,
+          start_time: d.start_time ?? "09:00",
+          close_time: d.close_time ?? "17:00",
+        })),
       });
 
       if (resp.success) {

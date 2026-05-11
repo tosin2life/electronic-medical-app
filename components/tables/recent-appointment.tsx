@@ -132,7 +132,7 @@ import { AppointmentStatusIndicator } from "../appointment-status-indicator";
 import { ViewAppointment } from "../view-appointment";
 
 interface DataProps {
-  data: AppointmentWithDetails[];
+  data: AppointmentWithDetails[] | undefined;
 }
 const columns = [
   { header: "Info", key: "name" },
@@ -217,7 +217,7 @@ export const RecentAppointments = ({ data }: DataProps) => {
 
         <td>
           <div className="flex items-center gap-x-2">
-            <ViewAppointment id={item?.id} />
+            <ViewAppointment id={item?.id?.toString()} />
 
             <Link href={`/record/appointments/${item?.id}`}>See all</Link>
           </div>
@@ -236,7 +236,7 @@ export const RecentAppointments = ({ data }: DataProps) => {
         </Button>
       </div>
 
-      <Table columns={columns} renderRow={renderRow} data={data} />
+      <Table columns={columns} renderRow={renderRow} data={data ?? []} />
     </div>
   );
 };

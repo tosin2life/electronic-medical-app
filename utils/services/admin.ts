@@ -47,6 +47,9 @@ export async function getAdminDashboardStats() {
             specialization: true,
             img: true,
             colorCode: true,
+            working_days: {
+              select: { day: true, start_time: true, close_time: true },
+            },
           },
           take: 5,
         }),

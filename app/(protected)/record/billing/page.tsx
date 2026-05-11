@@ -9,7 +9,7 @@ import { SearchParamsProps } from "@/types";
 import { checkRole } from "@/utils/roles";
 import { DATA_LIMIT } from "@/utils/settings";
 import { getPaymentRecords } from "@/utils/services/payment";
-import { Patient, Payment } from "@prisma/client";
+import { Payment } from "@prisma/client";
 import { format } from "date-fns";
 import { ReceiptText } from "lucide-react";
 
@@ -65,7 +65,16 @@ const columns = [
 ];
 
 interface ExtendedProps extends Payment {
-  patient: Patient;
+  patient: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    date_of_birth: Date;
+    img: string | null;
+    colorCode: string | null;
+    gender: string;
+    phone: string;
+  };
 }
 
 const BillingPage = async (props: SearchParamsProps) => {

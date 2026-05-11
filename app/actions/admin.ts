@@ -117,7 +117,7 @@ export async function createNewDoctor(data: DoctorFormData) {
 interface StaffFormData {
   name: string;
   email: string;
-  password: string;
+  password?: string;
   [key: string]: unknown;
 }
 

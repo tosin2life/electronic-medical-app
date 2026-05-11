@@ -36,11 +36,11 @@ const columns = [
 
 interface UserProps {
   id: string;
-  firstName: string;
-  lastName: string;
+  firstName: string | null;
+  lastName: string | null;
   emailAddresses: { emailAddress: string }[];
-  publicMetadata: { role: string };
-  lastSignInAt: number | string;
+  publicMetadata: { role?: string };
+  lastSignInAt: number | string | null;
 }
 
 export default async function UserPage() {
@@ -65,7 +65,7 @@ export default async function UserPage() {
       <td className="table-cell capitalize">{user.publicMetadata.role}</td>
       <td className="hidden md:table-cell capitalize">Active</td>
       <td className="hidden md:table-cell capitalize">
-        {format(user?.lastSignInAt, "yyyy-MM-dd h:mm:ss")}
+        {user?.lastSignInAt ? format(user.lastSignInAt, "yyyy-MM-dd h:mm:ss") : "Never"}
       </td>
     </tr>
   );

@@ -113,6 +113,7 @@ export async function getPatientDashboardStatistics(id: string) {
         },
         patient: {
           select: {
+            id: true,
             first_name: true,
             last_name: true,
             gender: true,

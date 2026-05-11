@@ -32,7 +32,7 @@ export type AppointmentWithDetails = {
     id: string;
     first_name: string;
     last_name: string;
-    date_of_birth: Date;
+    date_of_birth?: Date;
     gender: Gender;
     img: string | null;
     colorCode: string | null;
@@ -49,8 +49,8 @@ export type AvailableDoctorProps = {
   id: string;
   name: string;
   specialization: string;
-  img?: string;
-  colorCode?: string;
+  img?: string | null;
+  colorCode?: string | null;
   working_days: {
     day: string;
     start_time: string;

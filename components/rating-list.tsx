@@ -5,7 +5,7 @@ interface RatingData {
   id: number;
   staff_id: string;
   rating: number;
-  comment?: string;
+  comment?: string | null;
   created_at: Date | string;
   patient: { last_name: string; first_name: string };
 }

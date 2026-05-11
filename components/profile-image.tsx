@@ -9,7 +9,7 @@ export const ProfileImage = ({
   textClassName,
   bgColor,
 }: {
-  url?: string;
+  url?: string | null;
   name: string;
   className?: string;
   textClassName?: string;

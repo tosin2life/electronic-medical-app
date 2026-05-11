@@ -63,7 +63,6 @@ export default async function AppointmentPage({
           {(isAdmin || isDoctor) && (
             <AppointmentActionOptions
               appointmentId={parseInt(id)}
-              userId={appointmentData.patient_id}
               patientId={appointmentData.patient_id}
               doctorId={appointmentData.doctor_id}
               status={appointmentData.status}

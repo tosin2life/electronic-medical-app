@@ -60,7 +60,7 @@ interface PatientProps extends Patient {
   appointments: {
     medical: {
       created_at: Date;
-      treatment_plan: string;
+      treatment_plan: string | null;
     }[];
   }[];
 }

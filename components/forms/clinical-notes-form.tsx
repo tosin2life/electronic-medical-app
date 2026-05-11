@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { createMedicalRecord } from "@/app/actions/appointment";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
@@ -49,7 +49,15 @@ const ClinicalNotesSchema = z.object({
         .min(40, "Diastolic must be at least 40")
         .max(120, "Diastolic must be at most 120")
     ),
-  heartRate: z.string().min(1, "Heart rate is required"),
+  heartRate: z
+    .union([z.string(), z.number()])
+    .transform((val) => (typeof val === "string" ? parseFloat(val) || 0 : val))
+    .pipe(
+      z
+        .number()
+        .min(40, "Heart rate must be at least 40 bpm")
+        .max(220, "Heart rate must be at most 220 bpm")
+    ),
   respiratory_rate: z
     .union([z.string(), z.number()])
     .transform((val) =>
@@ -99,8 +107,10 @@ export const ClinicalNotesForm = ({
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const form = useForm({
-    resolver: zodResolver(ClinicalNotesSchema),
+  const form = useForm<ClinicalNotesFormData>({
+    resolver: zodResolver(
+      ClinicalNotesSchema
+    ) as Resolver<ClinicalNotesFormData>,
     defaultValues: {
       treatment_plan: "",
       prescriptions: "",
@@ -113,7 +123,7 @@ export const ClinicalNotesForm = ({
       body_temperature: 37.0,
       systolic: 120,
       diastolic: 80,
-      heartRate: "",
+      heartRate: 72,
       respiratory_rate: 16,
       oxygen_saturation: 98,
       weight: 70,
@@ -186,6 +196,7 @@ export const ClinicalNotesForm = ({
                 name="heartRate"
                 placeholder="72 bpm"
                 label="Heart Rate"
+                inputType="number"
               />
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

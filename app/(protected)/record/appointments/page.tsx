@@ -7,7 +7,7 @@ import { checkRole, getRole } from "@/utils/roles";
 import { DATA_LIMIT } from "@/utils/settings";
 import { getPatientAppointments } from "@/utils/services/appointment";
 import { auth } from "@clerk/nextjs/server";
-import { Appointment, Doctor, Patient } from "@prisma/client";
+import { AppointmentStatus } from "@prisma/client";
 import { format } from "date-fns";
 import { BriefcaseBusiness } from "lucide-react";
 import { Pagination } from "@/components/pagination";
@@ -46,9 +46,31 @@ const columns = [
   },
 ];
 
-interface DataProps extends Appointment {
-  patient: Patient;
-  doctor: Doctor;
+interface DataProps {
+  id: number;
+  patient_id: string;
+  doctor_id: string;
+  type: string;
+  appointment_date: Date;
+  time: string;
+  status: AppointmentStatus;
+  patient: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    phone: string;
+    gender: string;
+    img: string | null;
+    date_of_birth: Date;
+    colorCode: string | null;
+  };
+  doctor: {
+    id: string;
+    name: string;
+    specialization: string;
+    colorCode: string | null;
+    img: string | null;
+  };
 }
 const Appointments = async (props: {
   searchParams?: Promise<{ [key: string]: string | undefined }>;
@@ -73,7 +95,7 @@ const Appointments = async (props: {
   ) {
     queryId = id;
   } else if (userRole === "doctor" || userRole === "patient") {
-    queryId = userId;
+    queryId = userId ?? undefined;
   } else if (userRole === "nurse") {
     queryId = undefined;
   }
@@ -141,7 +163,6 @@ const Appointments = async (props: {
           <div className="flex items-center gap-2">
             <ViewAppointment id={item?.id.toString()} />
             <AppointmentActionOptions
-              userId={userId || ""}
               patientId={item?.patient_id}
               doctorId={item?.doctor_id}
               status={item?.status}

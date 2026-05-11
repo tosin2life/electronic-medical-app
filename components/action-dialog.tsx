@@ -25,12 +25,12 @@ interface ActionDialogProps {
     name: string;
     email: string;
     phone: string;
-    address?: string;
+    address?: string | null;
     role: string;
-    department?: string;
-    license_number?: string;
-    img?: string;
-    colorCode?: string;
+    department?: string | null;
+    license_number?: string | null;
+    img?: string | null;
+    colorCode?: string | null;
   };
   deleteType?:
     | "doctor"
@@ -138,7 +138,7 @@ export const ActionDialog = ({
             <div className="flex gap-3 items-center">
               <ProfileImage
                 url={data?.img || ""}
-                name={data?.name}
+                name={data?.name ?? ""}
                 className="xl:size-20"
                 bgColor={data?.colorCode || ""}
                 textClassName="xl:text-2xl"
@@ -157,8 +157,8 @@ export const ActionDialog = ({
           <div className="mt-10 space-y-6">
             <div className="flex flex-col md:flex-row md:flex-wrap md:items-center  gap-y-4 md:gap-x-0 xl:justify-between">
               {/* <SmallCard label="Full Name" value={data?.name} /> */}
-              <SmallCard label="Email Address" value={data?.email} />
-              <SmallCard label="Phone Number" value={data?.phone} />
+              <SmallCard label="Email Address" value={data?.email ?? ""} />
+              <SmallCard label="Phone Number" value={data?.phone ?? ""} />
             </div>
 
             <div>
@@ -166,7 +166,7 @@ export const ActionDialog = ({
             </div>
 
             <div className="flex flex-col md:flex-row md:flex-wrap md:items-center  gap-y-4 md:gap-x-0 xl:justify-between">
-              <SmallCard label="Role" value={data?.role} />
+              <SmallCard label="Role" value={data?.role ?? ""} />
               <SmallCard label="Department" value={data?.department || "N/A"} />
               <SmallCard
                 label="License Number"

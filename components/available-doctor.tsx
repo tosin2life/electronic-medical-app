@@ -21,7 +21,7 @@ interface Days {
 }
 
 interface DataProps {
-  data: AvailableDoctorProps;
+  data: AvailableDoctorProps | undefined;
 }
 
 export const availableDays = ({ data }: { data: Days[] }) => {
@@ -58,7 +58,7 @@ export const AvailableDoctors = async ({ data }: DataProps) => {
             className=" border-none  w-full md:w-[300px] min-h-28 xl:w-full p-4 flex  gap-4 odd:bg-emerald-600/5 even:bg-yellow-600/5"
           >
             <ProfileImage
-              url={doc?.img}
+              url={doc?.img ?? undefined}
               name={doc?.name}
               className={`md:flex min-w-14 min-h-14 md:min-w-16 md:min-h-16`}
               textClassName="text-2xl font-semibold text-black"

@@ -1,4 +1,9 @@
-import { Control } from "react-hook-form";
+import {
+  Control,
+  ControllerRenderProps,
+  FieldValues,
+  Path,
+} from "react-hook-form";
 import {
   FormControl,
   FormField,
@@ -20,10 +25,10 @@ import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { Switch } from "./ui/switch";
 
-interface InputProps {
+interface InputProps<TFieldValues extends FieldValues = FieldValues> {
   type: "input" | "select" | "checkbox" | "switch" | "radio" | "textarea";
-  control: Control<Record<string, unknown>>;
-  name: string;
+  control: Control<TFieldValues>;
+  name: Path<TFieldValues>;
   label?: string;
   placeholder?: string;
   inputType?: "text" | "email" | "password" | "date" | "number";
@@ -32,7 +37,13 @@ interface InputProps {
   step?: string;
 }
 
-const RenderInput = ({ field, props }: { field: Record<string, unknown>; props: InputProps }) => {
+const RenderInput = <TFieldValues extends FieldValues>({
+  field,
+  props,
+}: {
+  field: ControllerRenderProps<TFieldValues, Path<TFieldValues>>;
+  props: InputProps<TFieldValues>;
+}) => {
   switch (props.type) {
     case "input":
       return (
@@ -42,13 +53,14 @@ const RenderInput = ({ field, props }: { field: Record<string, unknown>; props: 
             placeholder={props.placeholder}
             step={props.step}
             {...field}
+            value={field.value as string | number | readonly string[] | undefined}
           />
         </FormControl>
       );
 
     case "select":
       return (
-        <Select onValueChange={field.onChange} value={field?.value}>
+        <Select onValueChange={field.onChange} value={field?.value as string | undefined}>
           <FormControl>
             <SelectTrigger>
               <SelectValue placeholder={props.placeholder} />
@@ -115,16 +127,18 @@ const RenderInput = ({ field, props }: { field: Record<string, unknown>; props: 
       return (
         <FormControl>
           <Textarea
-            type={props.inputType}
             placeholder={props.placeholder}
             {...field}
+            value={field.value as string | number | readonly string[] | undefined}
           ></Textarea>
         </FormControl>
       );
   }
 };
 
-export const CustomInput = (props: InputProps) => {
+export function CustomInput<TFieldValues extends FieldValues = FieldValues>(
+  props: InputProps<TFieldValues>
+) {
   const { name, label, control, type } = props;
 
   return (
@@ -137,14 +151,14 @@ export const CustomInput = (props: InputProps) => {
           {type !== "radio" && type !== "checkbox" && (
             <FormLabel>{label}</FormLabel>
           )}
-          <RenderInput field={field} props={props} />
+          <RenderInput<TFieldValues> field={field} props={props} />
           <FormMessage />
         </FormItem>
       )}
     />
     // </div>
   );
-};
+}
 type Day = {
   day: string;
   start_time?: string;
@@ -157,11 +171,24 @@ interface SwitchProps {
 }
 
 export const SwitchInput = ({ data, setWorkSchedule }: SwitchProps) => {
-  const handleChange = (day: string, field: string | boolean, value: string) => {
+  type DayField = "start_time" | "close_time";
+
+  const handleChange = (
+    day: string,
+    field: DayField | true,
+    value: string
+  ) => {
     setWorkSchedule((prevDays) => {
       const dayExist = prevDays.find((d) => d.day === day);
 
       if (dayExist) {
+        if (field === true) {
+          return prevDays.map((d) =>
+            d.day === day
+              ? { ...d, start_time: "09:00", close_time: "17:00" }
+              : d
+          );
+        }
         return prevDays.map((d) =>
           d.day === day ? { ...d, [field]: value } : d
         );
@@ -171,9 +198,8 @@ export const SwitchInput = ({ data, setWorkSchedule }: SwitchProps) => {
             ...prevDays,
             { day, start_time: "09:00", close_time: "17:00" },
           ];
-        } else {
-          return [...prevDays, { day, [field]: value }];
         }
+        return [...prevDays, { day, [field]: value }];
       }
     });
   };

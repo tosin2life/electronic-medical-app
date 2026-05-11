@@ -3,17 +3,25 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import React from "react";
 
 interface DataProps {
+  id?: number | null;
   patientId: string;
   doctor_id: string | number;
   label: React.ReactNode;
 }
-export const MedicalHistoryDialog = async ({
+export const MedicalHistoryDialog = ({
+  id,
   patientId,
   doctor_id,
   label,
 }: DataProps) => {
-  // Suppress unused variable warnings for future use
-  console.log('Patient ID:', patientId, 'Doctor ID:', doctor_id);
+  console.log(
+    "Appointment ID:",
+    id,
+    "Patient ID:",
+    patientId,
+    "Doctor ID:",
+    doctor_id
+  );
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -26,7 +34,7 @@ export const MedicalHistoryDialog = async ({
       </DialogTrigger>
       <DialogContent className="max-h-[90%] max-w-[425px] md:max-w-2xl 2xl:max-w-4xl p-8 overflow-y-auto">
         {/* <DiagnosisContainer
-          id={id}
+          id={id!}
           patientId={patientId!}
           doctor_id={doctor_id!}
         /> */}
